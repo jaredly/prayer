@@ -4,15 +4,15 @@ import "regenerator-runtime/runtime";
 import React from 'react';
 import ReactDOM from 'react-dom'
 import Gun from 'gun'
+// magically adds the `Gun.user` stuff
 import "gun/sea"
 
 import LoadingStateWrapper, {useLoadingState} from './LoadingStateWrapper'
-import {login} from './api'
+import {useUser, type UserState} from './user'
 
 const gun = new Gun(['https://gunjs-server.glitch.me/gunz'])
 window.gun = gun
 
-type UserState = {type: 'logged-out'} | {type: 'logged-in', user: any};
 
 const Login = ({onLogin, error, loading}: {onLogin: (string, string) => void, error?: Error, loading?: boolean}) => {
     const [username, setUsername] = React.useState(null)
@@ -30,35 +30,9 @@ const Login = ({onLogin, error, loading}: {onLogin: (string, string) => void, er
     </div>
 }
 
-const serializeUser = user => {
-    return JSON.stringify(user.is)
-}
-const deserializeUser = (user, string) => {
-    const data = JSON.parse(string);
-    user.auth(data)
-}
-
-const initialUserStatus = (user) => {
-    if (window.localStorage.user) {
-        deserializeUser(user, window.localStorage.user)
-        return {type: 'logged-in', user}
-    } else {
-        return {type: 'logged-out'}
-    }
-}
-
 const App = () => {
     const user = window.user = React.useMemo(() => gun.user(), []);
-    const [loginStatus, updateLoginStatus] = useLoadingState(initialUserStatus(user));
-
-    const onLogin = React.useCallback(
-        (username, password) =>
-            updateLoginStatus.promise(login(gun, user, username, password).then(res => {
-                window.localStorage.user = serializeUser(user)
-                return res
-            })),
-        [],
-    );
+    const [loginStatus, onLogin] = useUser(gun, user);
 
     return <LoadingStateWrapper
         state={loginStatus}

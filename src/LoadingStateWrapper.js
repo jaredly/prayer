@@ -3,12 +3,14 @@ import React, {type Node} from 'react'
 import {type LoadingState, type Refreshing} from './loadingState'
 import {type Result, startLoading, loaded, setFailed} from './loadingState'
 
-export function useLoadingState <T>(initial: T): [LoadingState<T>, {
+export function useLoadingState <T>(initial: () => T): [LoadingState<T>, {
     promise: (Promise<T>) => void,
     set: (T) => void,
 }] {
-    const data = initial != null ? {type: 'loaded', data: initial, fetchTime: Date.now(), refreshing: null} : {type: 'not-loaded'};
-    const [state, setState] = React.useState(data);
+    const [state, setState] = React.useState(() => {
+        const initialData = initial();
+        return initialData != null ? {type: 'loaded', data: initialData, fetchTime: Date.now(), refreshing: null} : {type: 'not-loaded'};
+    });
     return [state, React.useMemo(() => ({
         promise: prom => {
             setState(startLoading);
