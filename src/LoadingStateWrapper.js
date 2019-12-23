@@ -1,6 +1,29 @@
 // @flow
 import React, {type Node} from 'react'
 import {type LoadingState, type Refreshing} from './loadingState'
+import {type Result, startLoading, loaded, setFailed} from './loadingState'
+
+export function useLoadingState <T>(initial: T): [LoadingState<T>, {
+    promise: (Promise<T>) => void,
+    set: (T) => void,
+}] {
+    const data = initial != null ? {type: 'loaded', data: initial, fetchTime: Date.now(), refreshing: null} : {type: 'not-loaded'};
+    const [state, setState] = React.useState(data);
+    return [state, React.useMemo(() => ({
+        promise: prom => {
+            setState(startLoading);
+            prom.then(
+                value => {
+                    setState(loaded(value))
+                },
+                error => {
+                    setState(current => setFailed(current, error))
+                }
+            )
+        },
+        set: v => setState(loaded(v))
+    }), [setState])]
+}
 
 type Props<T> = {
     state: LoadingState<T>,

@@ -6,27 +6,11 @@ import ReactDOM from 'react-dom'
 import Gun from 'gun'
 import "gun/sea"
 
-import LoadingStateWrapper from './LoadingStateWrapper'
-import {type LoadingState, type Result, startLoading, loaded, setFailed} from './loadingState'
+import LoadingStateWrapper, {useLoadingState} from './LoadingStateWrapper'
+import {login} from './api'
 
-const gun = new Gun(['https://gunjs-server.glitch.me/gun'])
-window.gun=gun
-
-const ponce = v => new Promise((res, rej) => v.once(ack => !ack || ack.err ? rej(ack) : res(ack)))
-
-const login = async (user, username, password) => {
-    console.log('logging in')
-    const exists = await ponce(gun.get(`~@${username}`)).catch(err => false);
-    if (!exists) {
-        console.log('creating')
-        await new Promise((res, rej) => user.create(username, password, ack => ack.err ? rej(new Error(ack.err)) : res(ack)))
-        console.log('created')
-    }
-    await new Promise((res, rej) => user.auth(username, password, ack => ack.err ? rej(new Error(ack.err)) : res(ack)))
-    user.recall({sessionStorage: true})
-    console.log('logged in')
-    return user
-}
+const gun = new Gun(['https://gunjs-server.glitch.me/gunz'])
+window.gun = gun
 
 type UserState = {type: 'logged-out'} | {type: 'logged-in', user: any};
 
@@ -46,41 +30,12 @@ const Login = ({onLogin, error, loading}: {onLogin: (string, string) => void, er
     </div>
 }
 
-const useLoadingState = (initial) => {
-    const data = initial != null ? {type: 'loaded', data: initial, fetchTime: Date.now(), refreshing: null} : {type: 'not-loaded'};
-    const [state, setState] = React.useState(data);
-    return [state, React.useMemo(() => ({
-        promise: prom => {
-            setState(startLoading);
-            prom.then(
-                value => {
-                    setState(loaded(value))
-                },
-                error => {
-                    setState(current => setFailed(current, error))
-                }
-            )
-        },
-        set: v => setState(loaded(v))
-    }), [setState])]
-}
-
 const serializeUser = user => {
-    const data = {
-        is: user.is,
-        sea: user._.sea,
-        soul: user._.soul,
-        put: user._.put,
-    }
-    return JSON.stringify(data)
+    return JSON.stringify(user.is)
 }
 const deserializeUser = (user, string) => {
     const data = JSON.parse(string);
-    console.log(data)
-    user.is = data.is
-    user._.put = data.put
-    user._.soul = user._.get = data.soul
-    user._.sea = data.sea
+    user.auth(data)
 }
 
 const initialUserStatus = (user) => {
@@ -98,7 +53,7 @@ const App = () => {
 
     const onLogin = React.useCallback(
         (username, password) =>
-            updateLoginStatus.promise(login(user, username, password).then(res => {
+            updateLoginStatus.promise(login(gun, user, username, password).then(res => {
                 window.localStorage.user = serializeUser(user)
                 return res
             })),
