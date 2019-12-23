@@ -1,6 +1,8 @@
 // @flow
 
-type LoadingState<T> =
+export type Refreshing = ('background' | 'foreground')
+
+export type LoadingState<T> =
     | {type: 'not-loaded'}
     | {
           type: 'loading',
@@ -11,7 +13,7 @@ type LoadingState<T> =
           // the `failed` state uses.
           data: T,
           fetchTime: number,
-          refreshing: ?('background' | 'foreground'),
+          refreshing: ?Refreshing,
       }
     | {
           type: 'failed',
