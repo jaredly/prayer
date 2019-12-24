@@ -13,5 +13,5 @@ export const login = async (gun: *, user: *, username: string, password: string)
     await new Promise((res, rej) => user.auth(username, password, ack => ack.err ? rej(new Error(ack.err)) : res(ack)))
     user.recall({sessionStorage: true})
     console.log('logged in')
-    return user
+    return
 }

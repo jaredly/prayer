@@ -5,7 +5,7 @@ import React from 'react'
 import {login} from './api'
 
 const serializeUser = user => {
-    return JSON.stringify(user.is)
+    return JSON.stringify(user._.sea)
 }
 const deserializeUser = (user, string) => {
     const data = JSON.parse(string);
@@ -17,6 +17,7 @@ export type UserState = {type: 'logged-out'} | {type: 'logged-in', user: any};
 export const initialUserStatus = (gun: any): LoadingState<UserState> => {
     if (window.localStorage.user) {
         const user = gun.user()
+        // user.recall({sessionStorage: true})
         deserializeUser(user, window.localStorage.user)
         return loaded({type: 'logged-in', user})
     } else {
@@ -32,7 +33,7 @@ export const useUser = (gun: any, loginStatus: LoadingState<UserState>, setLogin
             const user = gun.user();
             updateLoginStatus(login(gun, user, username, password).then(res => {
                 window.localStorage.user = serializeUser(user)
-                return res
+                return {type: 'logged-in', user: user}
             }))
         },
         [],

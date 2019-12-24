@@ -64,7 +64,7 @@ function Wrapper<T>({state, initial, loading, loaded, failed}: Props<T>) {
         case 'failed':
             return failed(state.error, state.previous ? state.previous.data : null)
         default:
-            throw new Error('Invalid loading state')
+            throw new Error('Invalid loading state: ' + JSON.stringify(state))
     }
 }
 
