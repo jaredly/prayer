@@ -3,6 +3,20 @@ import React, {type Node} from 'react'
 import {type LoadingState, type Refreshing} from './loadingState'
 import {type Result, startLoading, loaded, setFailed} from './loadingState'
 
+export function wrapLoadingState<T>(state: LoadingState<T>, setState: (LoadingState<T> => LoadingState<T>) => void): (Promise<T> => void) {
+    return React.useCallback((prom) => {
+            setState(startLoading);
+            prom.then(
+                value => {
+                    setState(() => loaded(value))
+                },
+                error => {
+                    setState(current => setFailed(current, error))
+                }
+            )
+    }, [setState])
+}
+
 export function useLoadingState <T>(initial: () => T): [LoadingState<T>, {
     promise: (Promise<T>) => void,
     set: (T) => void,
