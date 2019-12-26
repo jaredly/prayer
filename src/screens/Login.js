@@ -3,9 +3,9 @@ import React from 'react'
 import {type LoadingState} from '../loadingState'
 import LoadingStateWrapper from '../LoadingStateWrapper'
 import {useUser, type UserState} from '../user'
-import Gun from 'gun'
+// import Gun from 'gun'
 // magically adds the `Gun.user` stuff
-import "gun/sea"
+// import "gun/sea"
 
 const Login = ({onLogin, error, loading}: {onLogin: (string, string) => void, error?: Error, loading?: boolean}) => {
     const [username, setUsername] = React.useState(null)

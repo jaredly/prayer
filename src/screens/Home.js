@@ -1,71 +1,22 @@
 // @flow
+/** @jsx jsx */
+import { jsx } from '@emotion/core'
 import React from 'react'
+import {defaultTypes, type Item} from '../prayerJournalModule'
 
-type Kind = {
-    title: string,
-    description: string,
-    color?: string,
-    icon: string,
-};
-
-type Item = {
-    kind: string, // id
-    text: string,
-    active: boolean,
-    createdDate: number,
-    activityHistory: Array<{active: boolean, date: number}>,
-    comments: Array<{
-        text: string,
-        date: number,
-        inReplyTo: string,
-    }>
+const useRSKinds = (rs) => {
+    const [state, setState] = React.useState({});
+    React.useEffect(() => {
+        return rs.prayerJournal.onKinds(kinds => setState(kinds))
+    }, [])
+    return state
 }
 
-const defaultTypes: Array<Kind> = [{
-    title: 'People in need',
-    description: "People that I know who need help",
-    icon: 'P',
-}, {
-    title: 'Questions I have',
-    description: "Probably mostly doctrinal",
-    icon: '?'
-}, {
-    title: 'Requests for guidence',
-    description: "Lead kindly light",
-    icon: 'G'
-}, {
-    title: 'General requests',
-    description: "Misc needs, wants, etc.",
-    icon: 'R'
-}, {
-    title: 'Gratitude',
-    description: "Things I'm grateful for today",
-    icon: 'T'
-}, {
-    title: "God's hand in my life",
-    description: 'and ways he is working through me and others',
-    icon: 'H',
-}, {
-    title: 'Processing my experiences',
-    description: 'and reports on events, or plans for the future.',
-    icon: 'E'
-}];
-
-const useGunCollection = (collection) => {
+const useRSItems = (rs) => {
     const [state, setState] = React.useState({});
-    React.useMemo(() => {
-        collection.map().on((item, id) => {
-            setState(current => {
-                const next = {...current}
-                if (!item) {
-                    delete next[id]
-                } else {
-                    next[id] = item
-                }
-                return next
-            });
-        })
-    }, [collection])
+    React.useEffect(() => {
+        return rs.prayerJournal.onItems(items => setState(items))
+    }, [])
     return state
 }
 
@@ -78,14 +29,17 @@ const Adder = ({data, onChange, onSave}) => {
     </div>
 }
 
-const HomeScreen = ({user}: {user: any}) => {
-    const types = useGunCollection(user.get('types'));
-    const items = useGunCollection(user.get('items'));
+const HomeScreen = ({rs}: {rs: any}) => {
+    const types = useRSKinds(rs);
+    const items = useRSItems(rs);
     const sorted = {}
-    // Object.keys(items).forEach(id => {
-    //     const kind = items[id].kind
-    // })
-    console.log(items)
+    Object.keys(items).forEach(id => {
+        const kind = items[id].kind
+        if (!sorted[kind]) {
+            sorted[kind] = []
+        }
+        sorted[kind].push(items[id])
+    });
 
     const [adding, setAdding] = React.useState(null)
 
@@ -95,9 +49,10 @@ const HomeScreen = ({user}: {user: any}) => {
                 {defaultTypes.map((t, i) => <div key={i}>{t.title}</div>)}
             </div>
             <button onClick={() => {
-                const types = user.get('types');
+                // rs.prayerJournal.addKind
+                // const types = user.get('types');
                 defaultTypes.forEach(t => {
-                    types.set(t)
+                    rs.prayerJournal.addKind(t)
                 })
             }}>
                 Add default item types
@@ -105,20 +60,60 @@ const HomeScreen = ({user}: {user: any}) => {
         </div>
     }
 
-    return <div>
-        Hi folks
+    return <div css={{
+        // backgroundColor: '#aaf',
+    }}>
         {Object.keys(types).map(id => (
-            <div key={id}>
+            <div key={id} css={{
+                // padding: '8px 16px',
+            }}>
+                <div css={{
+                    fontSize: '80%',
+                }}>
                 {types[id].title}
-                <button onClick={() => setAdding({kind: types[id], text: '', active: true, createdDate: Date.now(), activityHistory: {}, comments: {}})}>
-                    Add item
-                </button>
+                </div>
+                <div>
+                    {(sorted[id] || []).map(item => (
+                        <div key={item.id}>
+                            {item.text}
+                        </div>
+                    ))}
+                    <button onClick={() => setAdding({
+                        id: Math.random().toString(16).slice(2),
+                        kind: id,
+                        text: '',
+                        active: true,
+                        createdDate: Date.now(),
+                        activityHistory: [],
+                        comments: []
+                    })} css={{
+                        alignSelf: 'stretch',
+                        border: 'none',
+                        backgroundColor: 'transparent',
+                        '&:hover': {
+                            backgroundColor: '#ccc',
+                        },
+                        '&:active': {
+                            backgroundColor: '#ccc',
+                        }
+                    }}>
+                        ➕
+                    </button>
+                </div>
             </div>
         ))}
         {adding
-        ? <Adder data={adding} onSave={data => {
+        ? <Adder data={adding} onSave={async (data: Item) => {
             setAdding(null);
-            user.get('items').set(data);
+            // user.get('items').set(data);
+
+            try {
+                await rs.prayerJournal.addItem(data)
+            } catch(e) {
+                return console.error('validation error:', e);
+            }
+            setAdding(null);
+            console.log('stored bookmark successfully');
         }} onChange={a => setAdding(a)} />
     : null}
     </div>
