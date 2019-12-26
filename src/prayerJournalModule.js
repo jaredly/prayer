@@ -1,6 +1,6 @@
 // @flow
 
-type Kind = {
+export type Kind = {
     id: string,
     title: string,
     description: string,
@@ -148,6 +148,9 @@ const prayerJournalModule = {
                     var path = itemPath(item.id);
                     await priv.storeObject("item", path, item);
                     return item;
+                },
+                removeItem: async (id: string) => {
+                    await priv.remove(itemPath(id));
                 },
                 getKind: (id: string) => priv.getObject(kindPath(id)),
                 onKinds: (fn: any) => onPath('kinds', fn),

@@ -4,7 +4,8 @@ import { jsx } from '@emotion/core';
 import React from 'react';
 import { defaultTypes, type Item } from '../prayerJournalModule';
 import Header from './Header';
-import TextareaAutosize from 'react-textarea-autosize';
+import Adder from './Adder'
+import ViewItem, {maybeBlank} from './ViewItem'
 
 const useRSKinds = rs => {
     const [state, setState] = React.useState({});
@@ -24,50 +25,7 @@ const useRSItems = rs => {
     return state;
 };
 
-const Adder = ({ type, data, onChange, onSave, onCancel }) => {
-    return (
-        <div css={{display: 'flex', flexDirection: 'column'}}>
-            <div css={{
-                fontSize: '24px',
-                fontWeight: 'bold',
-                padding: 8,
-            }}>
-            {type}
-            </div>
-            <div style={{position: 'relative', display: 'flex', flexDirection: 'column'}}>
-            <TextareaAutosize
-                minRows={3}
-                maxRows={15}
-                value={data.text}
-                css={{
-                    fontFamily: 'inherit',
-                    fontSize: '24px',
-                    lineHeight: 1.5,
-                    padding: 8,
-                }}
-                onChange={evt => onChange({ ...data, text: evt.target.value })}
-            />
-            {data.text === ''
-            ? <div css={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                pointerEvents: 'none',
-                    padding: 8,
-                fontSize: '24px',
-                lineHeight: 1.5,
-                opacity: 0.5,
-            }}>Enter text here...</div>
-            : null}
-            </div>
-            {data.text === ''
-            ? <button onClick={() => onCancel()}>Cancel</button>
-            : <button onClick={() => onSave(data)}>Save</button>}
-        </div>
-    );
-};
-
-const HomeScreen = ({ rs }: { rs: any }) => {
+const HomeScreen = ({ rs, }: { rs: any }) => {
     const types = useRSKinds(rs);
     const items = useRSItems(rs);
     const sorted = {};
@@ -78,6 +36,20 @@ const HomeScreen = ({ rs }: { rs: any }) => {
         }
         sorted[kind].push(items[id]);
     });
+
+    const [showing, setShowing] = React.useState(() => {
+        const id = window.location.hash.slice(1)
+        if (!id) return null
+        return id
+    });
+
+    React.useMemo(() => {
+        if (showing) {
+            window.location.hash = '#' + showing
+        } else {
+            window.location.hash = ''
+        }
+    }, [showing])
 
     const [adding, setAdding] = React.useState(null);
 
@@ -104,6 +76,20 @@ const HomeScreen = ({ rs }: { rs: any }) => {
         );
     }
 
+    if (showing && items[showing]) {
+        const item = items[showing]
+        return <ViewItem
+            item={item}
+            type={types[item.kind]}
+            onClose={() => setShowing(null)}
+            onDelete={() => {
+                rs.prayerJournal.removeItem(item.id);
+                // deleteItem(item);
+                setShowing(null);
+            }}
+        />
+    }
+
     return (
         <div
             css={{
@@ -114,7 +100,14 @@ const HomeScreen = ({ rs }: { rs: any }) => {
             }}
         >
             <Header rs={rs} />
-            <div css={{ overflow: 'auto', minHeight: 0, flex: 1, backgroundColor: '#eee' }}>
+            <div
+                css={{
+                    overflow: 'auto',
+                    minHeight: 0,
+                    flex: 1,
+                    backgroundColor: '#eee',
+                }}
+            >
                 {Object.keys(types)
                     .sort((a, b) => cmp(types[a].title, types[b].title))
                     .map(id => (
@@ -179,17 +172,27 @@ const HomeScreen = ({ rs }: { rs: any }) => {
                             >
                                 {(sorted[id] || []).map(item => (
                                     <div
+                                        onClick={() => setShowing(item.id)}
                                         css={{
                                             padding: '8px 16px',
+                                            '&:hover': {
+                                                backgroundColor: '#ccc',
+                                            },
+                                            '&:active': {
+                                                backgroundColor: '#ccc',
+                                            },
                                         }}
                                         key={item.id}
                                     >
-                                        {item.text}
+                                        {maybeBlank(item.text)}
                                     </div>
                                 ))}
                             </div>
                         </div>
                     ))}
+                <div
+                    css={{ height: 8, backgroundColor: '#aaf', marginTop: 16 }}
+                />
             </div>
             {adding ? (
                 <Adder
