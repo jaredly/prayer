@@ -3,6 +3,8 @@
 import { jsx } from '@emotion/core';
 import React from 'react';
 import { defaultTypes, type Item } from '../prayerJournalModule';
+import Header from './Header';
+import TextareaAutosize from 'react-textarea-autosize';
 
 const useRSKinds = rs => {
     const [state, setState] = React.useState({});
@@ -12,6 +14,8 @@ const useRSKinds = rs => {
     return state;
 };
 
+const cmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+
 const useRSItems = rs => {
     const [state, setState] = React.useState({});
     React.useEffect(() => {
@@ -20,14 +24,45 @@ const useRSItems = rs => {
     return state;
 };
 
-const Adder = ({ data, onChange, onSave }) => {
+const Adder = ({ type, data, onChange, onSave, onCancel }) => {
     return (
-        <div>
-            <input
+        <div css={{display: 'flex', flexDirection: 'column'}}>
+            <div css={{
+                fontSize: '24px',
+                fontWeight: 'bold',
+                padding: 8,
+            }}>
+            {type}
+            </div>
+            <div style={{position: 'relative', display: 'flex', flexDirection: 'column'}}>
+            <TextareaAutosize
+                minRows={3}
+                maxRows={15}
                 value={data.text}
+                css={{
+                    fontFamily: 'inherit',
+                    fontSize: '24px',
+                    lineHeight: 1.5,
+                    padding: 8,
+                }}
                 onChange={evt => onChange({ ...data, text: evt.target.value })}
             />
-            <button onClick={() => onSave(data)}>Save</button>
+            {data.text === ''
+            ? <div css={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                pointerEvents: 'none',
+                    padding: 8,
+                fontSize: '24px',
+                lineHeight: 1.5,
+                opacity: 0.5,
+            }}>Enter text here...</div>
+            : null}
+            </div>
+            {data.text === ''
+            ? <button onClick={() => onCancel()}>Cancel</button>
+            : <button onClick={() => onSave(data)}>Save</button>}
         </div>
     );
 };
@@ -71,70 +106,97 @@ const HomeScreen = ({ rs }: { rs: any }) => {
 
     return (
         <div
-            css={
-                {
-                    // backgroundColor: '#aaf',
-                }
-            }
+            css={{
+                width: '100vw',
+                height: '100vh',
+                display: 'flex',
+                flexDirection: 'column',
+            }}
         >
-            {Object.keys(types).map(id => (
-                <div
-                    key={id}
-                    css={
-                        {
-                            // padding: '8px 16px',
-                        }
-                    }
-                >
-                    <div
-                        css={{
-                            fontSize: '80%',
-                        }}
-                    >
-                        {types[id].title}
-                    </div>
-                    <div>
-                        {(sorted[id] || []).map(item => (
-                            <div key={item.id}>{item.text}</div>
-                        ))}
-                        <button
-                            onClick={() =>
-                                setAdding({
-                                    id: Math.random()
-                                        .toString(16)
-                                        .slice(2),
-                                    kind: id,
-                                    text: '',
-                                    active: true,
-                                    createdDate: Date.now(),
-                                    activityHistory: [],
-                                    comments: [],
-                                })
+            <Header rs={rs} />
+            <div css={{ overflow: 'auto', minHeight: 0, flex: 1, backgroundColor: '#eee' }}>
+                {Object.keys(types)
+                    .sort((a, b) => cmp(types[a].title, types[b].title))
+                    .map(id => (
+                        <div
+                            key={id}
+                            css={
+                                {
+                                    // padding: '8px 16px',
+                                }
                             }
-                            css={{
-                                alignSelf: 'stretch',
-                                border: 'none',
-                                backgroundColor: 'transparent',
-                                '&:hover': {
-                                    backgroundColor: '#ccc',
-                                },
-                                '&:active': {
-                                    backgroundColor: '#ccc',
-                                },
-                            }}
                         >
-                            ➕
-                        </button>
-                    </div>
-                </div>
-            ))}
+                            <div
+                                css={{
+                                    fontSize: '80%',
+                                    padding: '4px 8px',
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                }}
+                            >
+                                {types[id].title}
+                                <button
+                                    onClick={() =>
+                                        setAdding({
+                                            id: Math.random()
+                                                .toString(16)
+                                                .slice(2),
+                                            kind: id,
+                                            text: '',
+                                            active: true,
+                                            createdDate: Date.now(),
+                                            activityHistory: [],
+                                            comments: [],
+                                        })
+                                    }
+                                    css={{
+                                        // alignSelf: 'stretch',
+                                        // width: '100%',
+                                        border: 'none',
+                                        backgroundColor: 'transparent',
+                                        textAlign: 'left',
+                                        fontSize: 'inherit',
+                                        padding: '4px 8px',
+                                        '&:hover': {
+                                            backgroundColor: '#ccc',
+                                        },
+                                        '&:active': {
+                                            backgroundColor: '#ccc',
+                                        },
+                                    }}
+                                >
+                                    ➕ add
+                                </button>
+                            </div>
+                            <div
+                                css={{
+                                    borderTop: '4px',
+                                    // display: 'flex',
+                                    // flexDirection: 'column',
+                                }}
+                            >
+                                {(sorted[id] || []).map(item => (
+                                    <div
+                                        css={{
+                                            padding: '8px 16px',
+                                        }}
+                                        key={item.id}
+                                    >
+                                        {item.text}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
+            </div>
             {adding ? (
                 <Adder
+                    type={types[adding.kind].title}
                     data={adding}
+                    onCancel={() => setAdding(null)}
                     onSave={async (data: Item) => {
-                        setAdding(null);
-                        // user.get('items').set(data);
-
                         try {
                             await rs.prayerJournal.addItem(data);
                         } catch (e) {

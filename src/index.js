@@ -15,7 +15,6 @@ import HomeScreen from './screens/Home'
 import prayerJournalModule from './prayerJournalModule'
 
 import RemoteStorage from 'remotestoragejs';
-import ConnectWidget from 'remotestorage-widget';
 
 type AppState = {
     rs: any,
@@ -26,8 +25,8 @@ const getInitialState = (rs) => {
     window.rs = rs
     rs.access.claim('prayerJournal', 'rw');
     rs.caching.enable('/prayerJournal/')
-    const widget = new ConnectWidget(rs);
-    widget.attach();
+    // const widget = new ConnectWidget(rs);
+    // widget.attach();
 
     return {
         rs,
@@ -41,6 +40,8 @@ const reduce = (state, action) => {
             const userState = action.status(state.userState)
             // console.log(state, action.status)
             return {...state, userState}
+        case 'logout':
+            return {...state, userState: loaded({type: 'logged-out'})}
     }
     return state
 }
@@ -62,7 +63,11 @@ const App = () => {
         const {rs} = state;
         rs.on('connected', () => {
             const userAddress = rs.remote.userAddress;
-            dispatch({type: 'login', status: () => loaded({type: 'logged-in', user: rs.remote})})
+            dispatch({type: 'login', status: (_) => loaded({type: 'logged-in', user: rs.remote})})
+        })
+
+        rs.on('disconnected', () => {
+            dispatch({type: 'logout'})
         })
 
         rs.on('network-offline', () => {

@@ -118,6 +118,7 @@ const prayerJournalModule = {
             let data = {}
             priv.getAll(path + '/').then(listing => {
                 data = listing;
+                console.log('got', path, listing)
                 fn(listing)
             });
             const listener = (evt) => {
@@ -147,9 +148,6 @@ const prayerJournalModule = {
                     var path = itemPath(item.id);
                     await priv.storeObject("item", path, item);
                     return item;
-                },
-                getKinds: async () => {
-                    return priv.getListing('kinds/')
                 },
                 getKind: (id: string) => priv.getObject(kindPath(id)),
                 onKinds: (fn: any) => onPath('kinds', fn),
