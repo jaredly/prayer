@@ -3,9 +3,10 @@
 import React from 'react';
 import { jsx } from '@emotion/core';
 import LogOut from 'react-ionicons/lib/MdLogOut';
+import Menu from 'react-ionicons/lib/MdMenu';
 import Colors from './Colors';
 
-const Header = ({ rs }: { rs: any }) => {
+const Header = ({ rs, onMenu }: { rs: any, onMenu: () => void }) => {
     if (!rs.remote.userAddress) {
         return null;
     }
@@ -20,13 +21,18 @@ const Header = ({ rs }: { rs: any }) => {
                 justifyContent: 'space-between',
             }}
         >
-            {rs.remote.userAddress}
+            <div onClick={() => onMenu()}>
+                <Menu />
+            </div>
             <div
-                onClick={() => {
-                    rs.disconnect();
+                css={{
+                    textAlign: 'center',
+                    flex: 1,
+                    fontWeight: 'bold',
+                    fontSize: 20,
                 }}
             >
-                <LogOut />
+                Fervent Prayer
             </div>
         </div>
     );
