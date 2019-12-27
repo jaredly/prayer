@@ -5,7 +5,7 @@ import React from 'react';
 import { defaultTypes, type Item, type Kind } from '../prayerJournalModule';
 import Header from './Header';
 import Adder from './Adder';
-import TextareaAutosize from 'react-textarea-autosize';
+import Textarea from './Textarea';
 import Close from 'react-ionicons/lib/MdClose';
 import Checkmark from 'react-ionicons/lib/MdCheckmark';
 import Create from 'react-ionicons/lib/MdCreate';
@@ -43,22 +43,22 @@ const Text = ({ onChange, item }) => {
             }}
         >
             {editing ? (
-                <TextareaAutosize
-                    inputRef={r => (r ? r.focus() : null)}
+                <Textarea
+                    placeholder="Enter item text"
+                    // inputRef={r => (r ? r.focus() : null)}
+                    autofocus
                     minRows={1}
                     maxRows={15}
                     value={editing.text}
+                    containerStyle={{ flex: 1 }}
                     css={{
-                        flex: 1,
                         fontFamily: 'inherit',
                         fontSize: 'inherit',
                         border: 'none',
                         // lineHeight: 1.5,
                         padding: '8px 16px',
                     }}
-                    onChange={evt =>
-                        setEditing({ ...editing, text: evt.target.value })
-                    }
+                    onChange={text => setEditing({ ...editing, text })}
                 />
             ) : (
                 <div

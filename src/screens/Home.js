@@ -98,7 +98,23 @@ const HomeScreen = ({ rs }: { rs: any }) => {
     const [menu, setMenu] = React.useState(false);
 
     if (route && route.type === 'new-prayer') {
-        return <PrayerRecorder types={types} sorted={sorted} />;
+        return (
+            <PrayerRecorder
+                types={types}
+                sorted={sorted}
+                initial={() => rs.prayerJournal.getTmpRecord()}
+                onClose={() => {
+                    setRoute(null);
+                }}
+                onSave={record => {
+                    rs.prayerJournal.putTmpRecord(record);
+                }}
+                onFinish={record => {
+                    rs.prayerJournal.finishRecord(record);
+                    setRoute(null);
+                }}
+            />
+        );
     }
 
     if (Object.keys(types).length === 0) {

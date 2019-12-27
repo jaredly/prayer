@@ -127,10 +127,17 @@ const itemSchema = {
 export type Record = {
     id: string,
     createdDate: number,
-    finishedDate: number,
+    finishedDate?: number,
     notes: { [key: string]: string },
     generalNotes: string,
 };
+
+const emptyRecord = () => ({
+    id: 'tmp',
+    createdDate: Date.now(),
+    notes: {},
+    generalNotes: '',
+});
 
 const recordSchema = {
     type: 'object',
@@ -199,6 +206,37 @@ const prayerJournalModule = {
 
         return {
             exports: {
+                getTmpRecord: () => {
+                    return priv
+                        .getObject(recordPath('tmp'))
+                        .then(v => {
+                            if (!v) throw new Error('null');
+                            return v;
+                        })
+                        .catch(err => emptyRecord());
+                },
+                putTmpRecord: async (record: Record) => {
+                    var path = recordPath('tmp');
+                    await priv.storeObject('record', path, {
+                        ...record,
+                        id: 'tmp',
+                    });
+                    return record;
+                },
+                finishRecord: async (record: Record) => {
+                    record = {
+                        ...record,
+                        id: Math.random()
+                            .toString(16)
+                            .slice(2),
+                    };
+                    const path = recordPath(record.id);
+                    await Promise.all([
+                        priv.storeObject('record', path, record),
+                        priv.remove(recordPath('tmp')),
+                    ]);
+                    return record;
+                },
                 addKind: async (kind: Kind) => {
                     var path = kindPath(kind.id); // use hashed URL as filename as well
                     await priv.storeObject('item-kind', path, kind);

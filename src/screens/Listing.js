@@ -8,7 +8,7 @@ import Adder from './Adder';
 import ViewItem, { maybeBlank } from './ViewItem';
 import Colors from './Colors';
 
-const cmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+export const cmp = (a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0);
 
 const Listing = ({
     types,
