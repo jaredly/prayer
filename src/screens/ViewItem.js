@@ -17,16 +17,74 @@ export const maybeBlank = (text: string) => {
     return text;
 };
 
-const MaybeDelete = ({onDelete}: {onDelete: () => void}) => {
-    const [really, setReally] = React.useState(false)
+const MaybeDelete = ({ onDelete }: { onDelete: () => void }) => {
+    const [really, setReally] = React.useState(false);
     if (really) {
-        return <div>
-            <button onClick={() => onDelete()}>Really delete</button>
-            <button onClick={() => setReally(false)}>Just kidding</button>
-        </div>
+        return (
+            <div>
+                <button onClick={() => onDelete()}>Really delete</button>
+                <button onClick={() => setReally(false)}>Just kidding</button>
+            </div>
+        );
     }
-    return <button onClick={() => setReally(true)}>Delete</button>
-}
+    return <button onClick={() => setReally(true)}>Delete</button>;
+};
+
+const Text = ({ onChange, item }) => {
+    const [editing, setEditing] = React.useState(null);
+    return (
+        <div
+            css={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'flex-start',
+                justifyContent: 'space-between',
+                marginRight: 8,
+            }}
+        >
+            {editing ? (
+                <TextareaAutosize
+                    inputRef={r => (r ? r.focus() : null)}
+                    minRows={1}
+                    maxRows={15}
+                    value={editing.text}
+                    css={{
+                        flex: 1,
+                        fontFamily: 'inherit',
+                        fontSize: 'inherit',
+                        border: 'none',
+                        // lineHeight: 1.5,
+                        padding: '8px 16px',
+                    }}
+                    onChange={evt =>
+                        setEditing({ ...editing, text: evt.target.value })
+                    }
+                />
+            ) : (
+                <div
+                    css={{
+                        padding: '8px 16px',
+                    }}
+                >
+                    {maybeBlank(item.text)}
+                </div>
+            )}
+            <button
+                onClick={() => {
+                    if (editing) {
+                        onChange(editing);
+                        setEditing(null);
+                    } else {
+                        setEditing(item);
+                    }
+                }}
+                css={{ padding: 0, margin: 0 }}
+            >
+                {editing ? <Checkmark /> : <Create />}
+            </button>
+        </div>
+    );
+};
 
 const ViewItem = ({
     item,
@@ -41,8 +99,6 @@ const ViewItem = ({
     onDelete: () => void,
     onChange: (item: Item) => void,
 }) => {
-    const [editing, setEditing] = React.useState(null);
-
     return (
         <div
             css={{
@@ -63,57 +119,15 @@ const ViewItem = ({
                 }}
             >
                 {maybeBlank(type ? type.title : '')}
-                <button onClick={() => onClose()} css={{padding: 0, margin: 0}}>
+                <button
+                    onClick={() => onClose()}
+                    css={{ padding: 0, margin: 0 }}
+                >
                     <Close />
                 </button>
             </div>
             <div>
-                <div css={{
-                    display: 'flex',
-                    flexDirection: 'row',
-                    alignItems: 'flex-start',
-                    justifyContent: 'space-between',
-                    marginRight: 8,
-                }}>
-                    {editing ?
-                        <TextareaAutosize
-                            inputRef={r => r ? r.focus() : null}
-                            minRows={1}
-                            maxRows={15}
-                            value={editing.text}
-                            css={{
-                                flex: 1,
-                                fontFamily: 'inherit',
-                                fontSize: 'inherit',
-                                border: 'none',
-                                // lineHeight: 1.5,
-                                padding: '8px 16px',
-                            }}
-                            onChange={evt =>
-                                setEditing({ ...editing, text: evt.target.value })
-                            }
-                        />
-                    : <div
-                        css={{
-                            padding: '8px 16px',
-                        }}
-                    >
-                        {maybeBlank(item.text)}
-                    </div>}
-                    <button onClick={() => {
-                        if (editing) {
-                            onChange(editing)
-                            setEditing(null)
-                        } else {
-                            setEditing(item)
-                        }
-                    }} css={{padding: 0, margin: 0}}>
-                    {editing
-                        ? <Checkmark />
-                        : <Create />}
-
-                    </button>
-                </div>
+                <Text onChange={onChange} item={item} />
                 <div
                     css={{
                         fontSize: '80%',
@@ -126,7 +140,7 @@ const ViewItem = ({
                     }}
                 >
                     {new Date(item.createdDate).toDateString()}
-                    <MaybeDelete onDelete={onDelete}/>
+                    <MaybeDelete onDelete={onDelete} />
                 </div>
             </div>
         </div>
