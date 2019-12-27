@@ -4,8 +4,9 @@ import { jsx } from '@emotion/core';
 import React from 'react';
 import { defaultTypes, type Item } from '../prayerJournalModule';
 import Header from './Header';
-import Adder from './Adder'
-import ViewItem, {maybeBlank} from './ViewItem'
+import Adder from './Adder';
+import ViewItem, { maybeBlank } from './ViewItem';
+import Listing from './Listing';
 
 const useRSKinds = rs => {
     const [state, setState] = React.useState({});
@@ -15,8 +16,6 @@ const useRSKinds = rs => {
     return state;
 };
 
-const cmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
-
 const useRSItems = rs => {
     const [state, setState] = React.useState({});
     React.useEffect(() => {
@@ -25,7 +24,7 @@ const useRSItems = rs => {
     return state;
 };
 
-const HomeScreen = ({ rs, }: { rs: any }) => {
+const HomeScreen = ({ rs }: { rs: any }) => {
     const types = useRSKinds(rs);
     const items = useRSItems(rs);
     const sorted = {};
@@ -41,18 +40,18 @@ const HomeScreen = ({ rs, }: { rs: any }) => {
     });
 
     const [showing, setShowing] = React.useState(() => {
-        const id = window.location.hash.slice(1)
-        if (!id) return null
-        return id
+        const id = window.location.hash.slice(1);
+        if (!id) return null;
+        return id;
     });
 
     React.useMemo(() => {
         if (showing) {
-            window.location.hash = '#' + showing
+            window.location.hash = '#' + showing;
         } else {
-            window.location.hash = ''
+            window.location.hash = '';
         }
-    }, [showing])
+    }, [showing]);
 
     const [adding, setAdding] = React.useState(null);
 
@@ -80,20 +79,22 @@ const HomeScreen = ({ rs, }: { rs: any }) => {
     }
 
     if (showing && items[showing]) {
-        const item = items[showing]
-        return <ViewItem
-            item={item}
-            type={types[item.kind]}
-            onClose={() => setShowing(null)}
-            onDelete={() => {
-                rs.prayerJournal.removeItem(item.id);
-                // deleteItem(item);
-                setShowing(null);
-            }}
-            onChange={item => {
-                rs.prayerJournal.putItem(item)
-            }}
-        />
+        const item = items[showing];
+        return (
+            <ViewItem
+                item={item}
+                type={types[item.kind]}
+                onClose={() => setShowing(null)}
+                onDelete={() => {
+                    rs.prayerJournal.removeItem(item.id);
+                    // deleteItem(item);
+                    setShowing(null);
+                }}
+                onChange={item => {
+                    rs.prayerJournal.putItem(item);
+                }}
+            />
+        );
     }
 
     return (
@@ -113,88 +114,24 @@ const HomeScreen = ({ rs, }: { rs: any }) => {
                     flex: 1,
                 }}
             >
-                {Object.keys(types)
-                    .sort((a, b) => cmp(types[a].title, types[b].title))
-                    .map(id => (
-                        <div
-                            key={id}
-                            css={
-                                {
-                                    // padding: '8px 16px',
-                                }
-                            }
-                        >
-                            <div
-                                css={{
-                                    fontSize: '80%',
-                                    padding: '4px 8px',
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    alignItems: 'center',
-                                }}
-                            >
-                                {types[id].title}
-                                <button
-                                    onClick={() =>
-                                        setAdding({
-                                            id: Math.random()
-                                                .toString(16)
-                                                .slice(2),
-                                            kind: id,
-                                            text: '',
-                                            active: true,
-                                            createdDate: Date.now(),
-                                            activityHistory: [],
-                                            comments: [],
-                                        })
-                                    }
-                                    css={{
-                                        // alignSelf: 'stretch',
-                                        // width: '100%',
-                                        border: 'none',
-                                        backgroundColor: 'transparent',
-                                        textAlign: 'left',
-                                        fontSize: 'inherit',
-                                        padding: '4px 8px',
-                                        '&:hover': {
-                                            backgroundColor: '#ccc',
-                                        },
-                                        '&:active': {
-                                            backgroundColor: '#ccc',
-                                        },
-                                    }}
-                                >
-                                    ➕ add
-                                </button>
-                            </div>
-                            <div
-                                css={{
-                                    borderTop: '4px',
-                                    // display: 'flex',
-                                    // flexDirection: 'column',
-                                }}
-                            >
-                                {(sorted[id] || []).map(item => (
-                                    <div
-                                        onClick={() => setShowing(item.id)}
-                                        css={{
-                                            padding: '8px 16px',
-                                            '&:hover': {
-                                                backgroundColor: '#ccc',
-                                            },
-                                            '&:active': {
-                                                backgroundColor: '#ccc',
-                                            },
-                                        }}
-                                        key={item.id}
-                                    >
-                                        {maybeBlank(item.text)}
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    ))}
+                <Listing
+                    setShowing={setShowing}
+                    sorted={sorted}
+                    types={types}
+                    onAdd={kind =>
+                        setAdding({
+                            id: Math.random()
+                                .toString(16)
+                                .slice(2),
+                            kind,
+                            text: '',
+                            active: true,
+                            createdDate: Date.now(),
+                            activityHistory: [],
+                            comments: [],
+                        })
+                    }
+                />
                 <div
                     css={{ height: 8, backgroundColor: '#aaf', marginTop: 16 }}
                 />
