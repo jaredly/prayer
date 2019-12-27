@@ -58,8 +58,9 @@ const PrayerRecorder = ({
         });
     }, []);
 
-    const save: Record => void = React.useMemo(() =>
-        debounced(200, 2000, onSave),
+    const save: Record => void = React.useMemo(
+        () => debounced(200, 2000, onSave),
+        [],
     );
 
     React.useEffect(() => {
@@ -79,64 +80,105 @@ const PrayerRecorder = ({
             css={{
                 display: 'flex',
                 flexDirection: 'column',
+                width: '100vw',
+                height: '100vh',
             }}
         >
-            {Object.keys(sorted)
-                .sort((a, b) => cmp(types[a].title, types[b].title))
-                .map(kind =>
-                    sorted[kind].length ? (
-                        <div key={kind}>
-                            <div
-                                css={{
-                                    fontWeight: 'bold',
-                                    padding: 8,
-                                    color: Colors.accentText,
-                                }}
-                            >
-                                {types[kind].title}
-                            </div>
-                            {sorted[kind].map(item => (
-                                <PrayerItem
-                                    item={item}
-                                    note={prayer.notes[item.id]}
-                                    onChange={text =>
-                                        updatePrayer({
-                                            ...prayer,
-                                            notes: {
-                                                ...prayer.notes,
-                                                [item.id]: text,
-                                            },
-                                        })
-                                    }
-                                />
-                            ))}
-                        </div>
-                    ) : null,
-                )}
             <div
                 css={{
-                    fontWeight: 'bold',
-                    padding: 8,
-                    color: Colors.accentText,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    overflow: 'auto',
+                    minHeight: 0,
                 }}
             >
-                General thoughts
+                {Object.keys(sorted)
+                    .sort((a, b) => cmp(types[a].title, types[b].title))
+                    .map(kind =>
+                        sorted[kind].length ? (
+                            <div key={kind}>
+                                <div
+                                    css={{
+                                        fontWeight: 'bold',
+                                        padding: 8,
+                                        color: Colors.accentText,
+                                    }}
+                                >
+                                    {types[kind].title}
+                                </div>
+                                {sorted[kind].map(item => (
+                                    <PrayerItem
+                                        item={item}
+                                        note={prayer.notes[item.id]}
+                                        onChange={text =>
+                                            updatePrayer({
+                                                ...prayer,
+                                                notes: {
+                                                    ...prayer.notes,
+                                                    [item.id]: text,
+                                                },
+                                            })
+                                        }
+                                    />
+                                ))}
+                            </div>
+                        ) : null,
+                    )}
+                <div
+                    css={{
+                        fontWeight: 'bold',
+                        padding: 8,
+                        color: Colors.accentText,
+                    }}
+                >
+                    General thoughts
+                </div>
+                <Textarea
+                    placeholder="General thoughts"
+                    minRows={3}
+                    maxRows={15}
+                    value={prayer.generalNotes}
+                    css={{
+                        fontFamily: 'inherit',
+                        fontSize: '24px',
+                        lineHeight: 1.5,
+                        padding: 8,
+                    }}
+                    onChange={generalNotes =>
+                        updatePrayer({ ...prayer, generalNotes })
+                    }
+                />
             </div>
-            <Textarea
-                placeholder="General thoughts"
-                minRows={3}
-                maxRows={15}
-                value={prayer.generalNotes}
+            <div
                 css={{
-                    fontFamily: 'inherit',
-                    fontSize: '24px',
-                    lineHeight: 1.5,
-                    padding: 8,
+                    display: 'flex',
                 }}
-                onChange={generalNotes =>
-                    updatePrayer({ ...prayer, generalNotes })
-                }
-            />
+            >
+                <button
+                    css={{
+                        fontSize: 24,
+                        flex: 1,
+                        padding: '8px 24px',
+                        backgroundColor: Colors.accent,
+                        border: 'none',
+                    }}
+                    onClick={() => onFinish(prayer)}
+                >
+                    Finish
+                </button>
+                <button
+                    css={{
+                        fontSize: 24,
+                        flex: 1,
+                        padding: '8px 24px',
+                        backgroundColor: 'white',
+                        border: 'none',
+                    }}
+                    onClick={() => onClose()}
+                >
+                    Close
+                </button>
+            </div>
         </div>
     );
 };
@@ -157,11 +199,11 @@ const PrayerItem = ({
                 css={{
                     fontSize: 24,
                     padding: 4,
+                    borderLeft: '8px solid',
+                    borderColor: note ? Colors.accent : 'white',
                 }}
                 onClick={() => setCollapsed(!collapsed)}
             >
-                {note ? <Check /> : <Circle />}
-                <span style={{ width: 8, display: 'inline-block' }} />
                 {item.text}
             </div>
             {collapsed ? null : (
