@@ -122,13 +122,14 @@ const prayerJournalModule = {
                 fn(listing)
             });
             const listener = (evt) => {
-                // console.log('listen', evt, path)
                 const [one, id] = evt.relativePath.split('/')
                 if (one !== path) {
                     return
                 }
                 data = {...data, [id]: evt.newValue}
-                // console.log('send', path, data)
+                if (!evt.newValue) {
+                    delete data[id];
+                }
                 fn(data)
             };
             priv.on('change', listener);
@@ -144,7 +145,7 @@ const prayerJournalModule = {
                     await priv.storeObject("item-kind", path, kind);
                     return kind;
                 },
-                addItem: async (item: Item) => {
+                putItem: async (item: Item) => {
                     var path = itemPath(item.id);
                     await priv.storeObject("item", path, item);
                     return item;

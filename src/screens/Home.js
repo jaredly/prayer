@@ -30,6 +30,9 @@ const HomeScreen = ({ rs, }: { rs: any }) => {
     const items = useRSItems(rs);
     const sorted = {};
     Object.keys(items).forEach(id => {
+        if (!items[id]) {
+            return;
+        }
         const kind = items[id].kind;
         if (!sorted[kind]) {
             sorted[kind] = [];
@@ -87,6 +90,9 @@ const HomeScreen = ({ rs, }: { rs: any }) => {
                 // deleteItem(item);
                 setShowing(null);
             }}
+            onChange={item => {
+                rs.prayerJournal.putItem(item)
+            }}
         />
     }
 
@@ -105,7 +111,6 @@ const HomeScreen = ({ rs, }: { rs: any }) => {
                     overflow: 'auto',
                     minHeight: 0,
                     flex: 1,
-                    backgroundColor: '#eee',
                 }}
             >
                 {Object.keys(types)
@@ -201,7 +206,7 @@ const HomeScreen = ({ rs, }: { rs: any }) => {
                     onCancel={() => setAdding(null)}
                     onSave={async (data: Item) => {
                         try {
-                            await rs.prayerJournal.addItem(data);
+                            await rs.prayerJournal.putItem(data);
                         } catch (e) {
                             return console.error('validation error:', e);
                         }
