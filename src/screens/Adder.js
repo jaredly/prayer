@@ -5,8 +5,15 @@ import React from 'react';
 import { defaultTypes, type Item } from '../prayerJournalModule';
 import Header from './Header';
 import TextareaAutosize from 'react-textarea-autosize';
+import Colors from './Colors';
 
-const Adder = ({ type, data, onChange, onSave, onCancel }: {
+const Adder = ({
+    type,
+    data,
+    onChange,
+    onSave,
+    onCancel,
+}: {
     type: string,
     data: Item,
     onChange: Item => void,
@@ -20,6 +27,7 @@ const Adder = ({ type, data, onChange, onSave, onCancel }: {
                     fontSize: '24px',
                     fontWeight: 'bold',
                     padding: 8,
+                    borderTop: `8px ${Colors.accent} solid`,
                 }}
             >
                 {type}
@@ -71,4 +79,4 @@ const Adder = ({ type, data, onChange, onSave, onCancel }: {
     );
 };
 
-export default Adder
+export default Adder;

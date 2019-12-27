@@ -6,6 +6,7 @@ import { defaultTypes, type Item } from '../prayerJournalModule';
 import Header from './Header';
 import Adder from './Adder';
 import ViewItem, { maybeBlank } from './ViewItem';
+import Colors from './Colors';
 import Listing from './Listing';
 
 const useRSKinds = rs => {
@@ -133,7 +134,11 @@ const HomeScreen = ({ rs }: { rs: any }) => {
                     }
                 />
                 <div
-                    css={{ height: 8, backgroundColor: '#aaf', marginTop: 16 }}
+                    css={{
+                        height: 8,
+                        backgroundColor: Colors.accent,
+                        marginTop: 16,
+                    }}
                 />
             </div>
             {adding ? (

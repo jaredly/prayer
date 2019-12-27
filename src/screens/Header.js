@@ -3,6 +3,7 @@
 import React from 'react';
 import { jsx } from '@emotion/core';
 import LogOut from 'react-ionicons/lib/MdLogOut';
+import Colors from './Colors';
 
 const Header = ({ rs }: { rs: any }) => {
     if (!rs.remote.userAddress) {
@@ -12,7 +13,7 @@ const Header = ({ rs }: { rs: any }) => {
         <div
             css={{
                 padding: '16px',
-                backgroundColor: '#aaf',
+                backgroundColor: Colors.accent,
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',
