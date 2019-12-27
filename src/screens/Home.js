@@ -110,36 +110,58 @@ const HomeScreen = ({ rs }: { rs: any }) => {
             <Header rs={rs} />
             <div
                 css={{
-                    overflow: 'auto',
+                    position: 'relative',
                     minHeight: 0,
+                    display: 'flex',
+                    flexDirection: 'column',
                     flex: 1,
                 }}
             >
-                <Listing
-                    setShowing={setShowing}
-                    sorted={sorted}
-                    types={types}
-                    onAdd={kind =>
-                        setAdding({
-                            id: Math.random()
-                                .toString(16)
-                                .slice(2),
-                            kind,
-                            text: '',
-                            active: true,
-                            createdDate: Date.now(),
-                            activityHistory: [],
-                            comments: [],
-                        })
-                    }
-                />
                 <div
                     css={{
-                        height: 8,
-                        backgroundColor: Colors.accent,
-                        marginTop: 16,
+                        overflow: 'auto',
+                        minHeight: 0,
                     }}
-                />
+                >
+                    <Listing
+                        setShowing={setShowing}
+                        sorted={sorted}
+                        types={types}
+                        onAdd={kind =>
+                            setAdding({
+                                id: Math.random()
+                                    .toString(16)
+                                    .slice(2),
+                                kind,
+                                text: '',
+                                active: true,
+                                createdDate: Date.now(),
+                                activityHistory: [],
+                                comments: [],
+                            })
+                        }
+                    />
+                    <div
+                        css={{
+                            height: 8,
+                            backgroundColor: Colors.accent,
+                            marginTop: 64,
+                        }}
+                    />
+                </div>
+                <div
+                    css={{
+                        backgroundColor: Colors.accent,
+                        position: 'absolute',
+                        bottom: 16,
+                        right: 16,
+                        fontSize: 24,
+                        padding: '16px 24px',
+                        borderRadius: 100,
+                    }}
+                >
+                    Record prayer
+                </div>
             </div>
             {adding ? (
                 <Adder

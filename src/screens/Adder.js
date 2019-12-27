@@ -6,6 +6,8 @@ import { defaultTypes, type Item } from '../prayerJournalModule';
 import Header from './Header';
 import TextareaAutosize from 'react-textarea-autosize';
 import Colors from './Colors';
+import Close from 'react-ionicons/lib/MdClose';
+import Checkmark from 'react-ionicons/lib/MdCheckmark';
 
 const Adder = ({
     type,
@@ -33,48 +35,67 @@ const Adder = ({
                 {type}
             </div>
             <div
-                style={{
-                    position: 'relative',
+                css={{
                     display: 'flex',
-                    flexDirection: 'column',
+                    flexDirection: 'row',
                 }}
             >
-                <TextareaAutosize
-                    minRows={3}
-                    maxRows={15}
-                    value={data.text}
-                    css={{
-                        fontFamily: 'inherit',
-                        fontSize: '24px',
-                        lineHeight: 1.5,
-                        padding: 8,
+                <div
+                    style={{
+                        position: 'relative',
+                        display: 'flex',
+                        flex: 1,
+                        flexDirection: 'column',
                     }}
-                    onChange={evt =>
-                        onChange({ ...data, text: evt.target.value })
-                    }
-                />
-                {data.text === '' ? (
-                    <div
+                >
+                    <TextareaAutosize
+                        minRows={3}
+                        maxRows={15}
+                        value={data.text}
                         css={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            pointerEvents: 'none',
-                            padding: 8,
+                            fontFamily: 'inherit',
                             fontSize: '24px',
                             lineHeight: 1.5,
-                            opacity: 0.5,
+                            padding: 8,
                         }}
-                    >
-                        Enter text here...
-                    </div>
-                ) : null}
+                        onChange={evt =>
+                            onChange({ ...data, text: evt.target.value })
+                        }
+                    />
+                    {data.text === '' ? (
+                        <div
+                            css={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                pointerEvents: 'none',
+                                padding: 8,
+                                fontSize: '24px',
+                                lineHeight: 1.5,
+                                opacity: 0.5,
+                            }}
+                        >
+                            Enter text here...
+                        </div>
+                    ) : null}
+                </div>
+                <div
+                    css={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-around',
+                    }}
+                >
+                    <button onClick={() => onCancel()}>
+                        <Close />
+                    </button>
+                    {data.text !== '' ? (
+                        <button onClick={() => onSave(data)}>
+                            <Checkmark />
+                        </button>
+                    ) : null}
+                </div>
             </div>
-            {data.text === '' ? (
-                <button onClick={() => onCancel()}>Cancel</button>
-            ) : (
-                <button onClick={() => onSave(data)}>Save</button>
-            )}
         </div>
     );
 };
