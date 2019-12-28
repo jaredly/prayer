@@ -14,6 +14,8 @@ import Colors from './Colors';
 import { cmp } from './Listing';
 import Circle from 'react-ionicons/lib/MdRadioButtonOff';
 import Check from 'react-ionicons/lib/MdCheckmarkCircleOutline';
+import Archive from 'react-ionicons/lib/MdArchive';
+import Undo from 'react-ionicons/lib/MdUndo';
 import Textarea from './Textarea';
 
 const debounced = (minWait, maxWait, fn) => {
@@ -69,7 +71,7 @@ const PrayerRecorder = ({
         }
     }, [prayer]);
 
-    const [expanded, setExpanded] = React.useState({});
+    // const [archived, setArchived] = React.useState({});
 
     if (!prayer) {
         return 'Loading...';
@@ -106,21 +108,46 @@ const PrayerRecorder = ({
                                 >
                                     {types[kind].title}
                                 </div>
-                                {sorted[kind].map(item => (
-                                    <PrayerItem
-                                        item={item}
-                                        note={prayer.notes[item.id]}
-                                        onChange={text =>
-                                            updatePrayer({
-                                                ...prayer,
-                                                notes: {
-                                                    ...prayer.notes,
-                                                    [item.id]: text,
-                                                },
-                                            })
-                                        }
-                                    />
-                                ))}
+                                {sorted[kind].map(item =>
+                                    prayer.archiving &&
+                                    prayer.archiving[item.id] ? (
+                                        <ArchivedPrayerItem
+                                            onRestore={() => {
+                                                updatePrayer({
+                                                    ...prayer,
+                                                    archiving: {
+                                                        ...prayer.archiving,
+                                                        [item.id]: false,
+                                                    },
+                                                });
+                                            }}
+                                            item={item}
+                                        />
+                                    ) : (
+                                        <PrayerItem
+                                            item={item}
+                                            note={prayer.notes[item.id]}
+                                            onArchive={() =>
+                                                updatePrayer({
+                                                    ...prayer,
+                                                    archiving: {
+                                                        ...prayer.archiving,
+                                                        [item.id]: true,
+                                                    },
+                                                })
+                                            }
+                                            onChange={text =>
+                                                updatePrayer({
+                                                    ...prayer,
+                                                    notes: {
+                                                        ...prayer.notes,
+                                                        [item.id]: text,
+                                                    },
+                                                })
+                                            }
+                                        />
+                                    ),
+                                )}
                             </div>
                         ) : null,
                     )}
@@ -183,13 +210,40 @@ const PrayerRecorder = ({
     );
 };
 
+const ArchivedPrayerItem = ({
+    item,
+    onRestore,
+}: {
+    item: Item,
+    onRestore: () => void,
+}) => {
+    return (
+        <div
+            css={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'flex-start',
+            }}
+        >
+            <div css={{ flex: 1, padding: '8px 16px', fontStyle: 'italic' }}>
+                {item.text}
+            </div>
+            <button onClick={() => onRestore()}>
+                <Undo />
+            </button>
+        </div>
+    );
+};
+
 const PrayerItem = ({
     item,
     onChange,
+    onArchive,
     note,
 }: {
     item: Item,
     onChange: string => void,
+    onArchive: () => void,
     note: string,
 }) => {
     const [collapsed, setCollapsed] = React.useState(true);
@@ -207,20 +261,32 @@ const PrayerItem = ({
                 {item.text}
             </div>
             {collapsed ? null : (
-                <Textarea
-                    value={note || ''}
-                    autofocus
-                    onChange={onChange}
-                    placeholder="Enter some thoughts"
-                    minRows={1}
-                    maxRows={15}
+                <div
                     css={{
-                        fontFamily: 'inherit',
-                        fontSize: '20px',
-                        lineHeight: 1.5,
-                        padding: 8,
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'flex-start',
                     }}
-                />
+                >
+                    <Textarea
+                        value={note || ''}
+                        autofocus
+                        onChange={onChange}
+                        placeholder="Enter some thoughts"
+                        minRows={1}
+                        maxRows={15}
+                        containerStyle={{ flex: 1 }}
+                        css={{
+                            fontFamily: 'inherit',
+                            fontSize: '20px',
+                            lineHeight: 1.5,
+                            padding: 8,
+                        }}
+                    />
+                    <button onClick={() => onArchive()}>
+                        <Archive />
+                    </button>
+                </div>
             )}
         </div>
     );

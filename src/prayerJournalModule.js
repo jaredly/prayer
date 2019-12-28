@@ -74,11 +74,11 @@ export type Item = {
     active: boolean,
     createdDate: number,
     activityHistory: Array<{ active: boolean, date: number }>,
-    comments: Array<{
-        text: string,
-        date: number,
-        inReplyTo: string,
-    }>,
+    // comments: Array<{
+    //     text: string,
+    //     date: number,
+    //     inReplyTo: string,
+    // }>,
 };
 
 const itemSchema = {
@@ -129,6 +129,7 @@ export type Record = {
     createdDate: number,
     finishedDate?: number,
     notes: { [key: string]: string },
+    archiving: ?{ [key: string]: boolean },
     generalNotes: string,
 };
 
@@ -136,6 +137,7 @@ const emptyRecord = () => ({
     id: 'tmp',
     createdDate: Date.now(),
     notes: {},
+    archiving: {},
     generalNotes: '',
 });
 
@@ -146,6 +148,10 @@ const recordSchema = {
         createdDate: { type: 'number' },
         finishedDate: { type: 'number' },
         notes: { type: 'object', additionalProperties: { type: 'string' } },
+        archiving: {
+            type: 'object',
+            additionalProperties: { type: 'boolean' },
+        },
         generalNotes: { type: 'string' },
     },
     required: ['id', 'createdDate', 'notes', 'generalNotes'],
