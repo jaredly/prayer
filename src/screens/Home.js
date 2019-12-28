@@ -10,8 +10,9 @@ import Colors from './Colors';
 import Listing from './Listing';
 import PrayerRecorder from './PrayerRecorder';
 import LogOut from 'react-ionicons/lib/MdLogOut';
+import type { RemoteStorageT } from '../';
 
-const useRSKinds = rs => {
+const useRSKinds = (rs: RemoteStorageT) => {
     const [state, setState] = React.useState({});
     React.useEffect(() => {
         return rs.prayerJournal.onKinds(kinds => setState(kinds));
@@ -19,7 +20,7 @@ const useRSKinds = rs => {
     return state;
 };
 
-const useRSItems = rs => {
+const useRSItems = (rs: RemoteStorageT) => {
     const [state, setState] = React.useState({});
     React.useEffect(() => {
         return rs.prayerJournal.onItems(items => setState(items));
@@ -63,7 +64,7 @@ const serializePath = (route: ?Route): ?string => {
     return null;
 };
 
-const HomeScreen = ({ rs }: { rs: any }) => {
+const HomeScreen = ({ rs }: { rs: RemoteStorageT }) => {
     const types = useRSKinds(rs);
     const items = useRSItems(rs);
     const sorted = {};
@@ -103,6 +104,13 @@ const HomeScreen = ({ rs }: { rs: any }) => {
                 types={types}
                 sorted={sorted}
                 initial={() => rs.prayerJournal.getTmpRecord()}
+                onDiscard={() => {
+                    rs.prayerJournal.discardTmpRecord();
+                    setRoute(null);
+                }}
+                archiveItem={item => {
+                    rs.prayerJournal.archiveItem(item);
+                }}
                 onClose={() => {
                     setRoute(null);
                 }}
@@ -197,6 +205,7 @@ const HomeScreen = ({ rs }: { rs: any }) => {
                                 text: '',
                                 active: true,
                                 createdDate: Date.now(),
+                                modifiedDate: Date.now(),
                                 activityHistory: [],
                                 comments: [],
                             })

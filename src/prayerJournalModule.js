@@ -73,6 +73,7 @@ export type Item = {
     text: string,
     active: boolean,
     createdDate: number,
+    modifiedDate: ?number,
     activityHistory: Array<{ active: boolean, date: number }>,
     // comments: Array<{
     //     text: string,
@@ -89,6 +90,7 @@ const itemSchema = {
         text: { type: 'string' },
         active: { type: 'boolean' },
         createdDate: { type: 'number' },
+        modifiedDate: { type: 'number' },
         activityHistory: {
             type: 'array',
             items: {
@@ -118,6 +120,7 @@ const itemSchema = {
         'kind',
         'text',
         'createdDate',
+        'modifiedDate',
         'active',
         'activityHistory',
         'comments',
@@ -129,7 +132,6 @@ export type Record = {
     createdDate: number,
     finishedDate?: number,
     notes: { [key: string]: string },
-    archiving: ?{ [key: string]: boolean },
     generalNotes: string,
 };
 
@@ -137,7 +139,6 @@ const emptyRecord = () => ({
     id: 'tmp',
     createdDate: Date.now(),
     notes: {},
-    archiving: {},
     generalNotes: '',
 });
 
@@ -148,10 +149,6 @@ const recordSchema = {
         createdDate: { type: 'number' },
         finishedDate: { type: 'number' },
         notes: { type: 'object', additionalProperties: { type: 'string' } },
-        archiving: {
-            type: 'object',
-            additionalProperties: { type: 'boolean' },
-        },
         generalNotes: { type: 'string' },
     },
     required: ['id', 'createdDate', 'notes', 'generalNotes'],
@@ -212,6 +209,36 @@ const prayerJournalModule = {
 
         return {
             exports: {
+                archiveItem: async (item: Item) => {
+                    const updated: Item = {
+                        ...item,
+                        active: false,
+                        activityHistory: item.activityHistory.concat([
+                            { active: false, date: Date.now() },
+                        ]),
+                        modifiedDate: Date.now(),
+                    };
+                    await priv.storeObject(
+                        'item',
+                        itemPath(updated.id),
+                        updated,
+                    );
+                },
+                unarchiveItem: async (item: Item) => {
+                    const updated: Item = {
+                        ...item,
+                        active: true,
+                        activityHistory: item.activityHistory.concat([
+                            { active: true, date: Date.now() },
+                        ]),
+                        modifiedDate: Date.now(),
+                    };
+                    await priv.storeObject(
+                        'item',
+                        itemPath(updated.id),
+                        updated,
+                    );
+                },
                 getTmpRecord: () => {
                     return priv
                         .getObject(recordPath('tmp'))
@@ -228,6 +255,9 @@ const prayerJournalModule = {
                         id: 'tmp',
                     });
                     return record;
+                },
+                discardTmpRecord: () => {
+                    return priv.remove(recordPath('tmp'));
                 },
                 finishRecord: async (record: Record) => {
                     record = {
@@ -271,5 +301,11 @@ const prayerJournalModule = {
         };
     },
 };
+
+type ExtractReturnType = <R>((any, any) => R) => R;
+export type PrayerJournalModuleType = $PropertyType<
+    $Call<ExtractReturnType, typeof prayerJournalModule.builder>,
+    'exports',
+>;
 
 export default prayerJournalModule;

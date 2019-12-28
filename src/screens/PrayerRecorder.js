@@ -44,6 +44,8 @@ const PrayerRecorder = ({
     onSave,
     onFinish,
     initial,
+    archiveItem,
+    onDiscard,
 }: {
     types: { [key: string]: Kind },
     sorted: { [key: string]: Array<Item> },
@@ -51,6 +53,8 @@ const PrayerRecorder = ({
     onSave: Record => void,
     onFinish: Record => void,
     initial: () => Promise<Record>,
+    archiveItem: Item => void,
+    onDiscard: () => void,
 }) => {
     const [prayer, updatePrayer] = React.useState(null);
 
@@ -71,7 +75,7 @@ const PrayerRecorder = ({
         }
     }, [prayer]);
 
-    // const [archived, setArchived] = React.useState({});
+    const [discarding, setDiscarding] = React.useState(false);
 
     if (!prayer) {
         return 'Loading...';
@@ -86,6 +90,17 @@ const PrayerRecorder = ({
                 height: '100vh',
             }}
         >
+            <div
+                css={{
+                    fontSize: 12,
+                    fontWeight: 'bold',
+                    textAlign: 'center',
+                    padding: 8,
+                    backgroundColor: Colors.accent,
+                }}
+            >
+                Prayer record {new Date(prayer.createdDate).toDateString()}
+            </div>
             <div
                 css={{
                     display: 'flex',
@@ -108,34 +123,13 @@ const PrayerRecorder = ({
                                 >
                                     {types[kind].title}
                                 </div>
-                                {sorted[kind].map(item =>
-                                    prayer.archiving &&
-                                    prayer.archiving[item.id] ? (
-                                        <ArchivedPrayerItem
-                                            onRestore={() => {
-                                                updatePrayer({
-                                                    ...prayer,
-                                                    archiving: {
-                                                        ...prayer.archiving,
-                                                        [item.id]: false,
-                                                    },
-                                                });
-                                            }}
-                                            item={item}
-                                        />
-                                    ) : (
+                                {sorted[kind].map(
+                                    item => (
                                         <PrayerItem
+                                            key={item.id}
                                             item={item}
                                             note={prayer.notes[item.id]}
-                                            onArchive={() =>
-                                                updatePrayer({
-                                                    ...prayer,
-                                                    archiving: {
-                                                        ...prayer.archiving,
-                                                        [item.id]: true,
-                                                    },
-                                                })
-                                            }
+                                            onArchive={() => archiveItem(item)}
                                             onChange={text =>
                                                 updatePrayer({
                                                     ...prayer,
@@ -147,6 +141,7 @@ const PrayerRecorder = ({
                                             }
                                         />
                                     ),
+                                    // ),
                                 )}
                             </div>
                         ) : null,
@@ -176,64 +171,112 @@ const PrayerRecorder = ({
                     }
                 />
             </div>
-            <div
-                css={{
-                    display: 'flex',
-                }}
-            >
-                <button
+            {discarding ? (
+                <div
                     css={{
-                        fontSize: 24,
-                        flex: 1,
-                        padding: '8px 24px',
-                        backgroundColor: Colors.accent,
-                        border: 'none',
+                        display: 'flex',
+                        flexDirection: 'column',
                     }}
-                    onClick={() => onFinish(prayer)}
                 >
-                    Finish
-                </button>
-                <button
+                    <button
+                        css={{
+                            fontSize: 24,
+                            flex: 1,
+                            padding: '8px 24px',
+                            backgroundColor: 'red',
+                            color: 'white',
+                            border: 'none',
+                        }}
+                        onClick={() => onDiscard()}
+                    >
+                        Discard
+                    </button>
+                    <button
+                        css={{
+                            fontSize: 24,
+                            flex: 1,
+                            padding: '8px 24px',
+                            backgroundColor: 'white',
+                            border: 'none',
+                        }}
+                        onClick={() => setDiscarding(false)}
+                    >
+                        Nevermind
+                    </button>
+                </div>
+            ) : (
+                <div
                     css={{
-                        fontSize: 24,
-                        flex: 1,
-                        padding: '8px 24px',
-                        backgroundColor: 'white',
-                        border: 'none',
+                        display: 'flex',
                     }}
-                    onClick={() => onClose()}
                 >
-                    Close
-                </button>
-            </div>
+                    <button
+                        css={{
+                            fontSize: 24,
+                            flex: 1,
+                            padding: '8px 24px',
+                            backgroundColor: Colors.accent,
+                            border: 'none',
+                        }}
+                        onClick={() => onFinish(prayer)}
+                    >
+                        Finish
+                    </button>
+                    <button
+                        css={{
+                            fontSize: 24,
+                            flex: 1,
+                            color: 'red',
+                            padding: '8px 24px',
+                            backgroundColor: 'white',
+                            border: 'none',
+                        }}
+                        onClick={() => setDiscarding(true)}
+                    >
+                        Discard
+                    </button>
+                    <button
+                        css={{
+                            fontSize: 24,
+                            flex: 1,
+                            padding: '8px 24px',
+                            backgroundColor: 'white',
+                            border: 'none',
+                        }}
+                        onClick={() => onClose()}
+                    >
+                        Close
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
 
-const ArchivedPrayerItem = ({
-    item,
-    onRestore,
-}: {
-    item: Item,
-    onRestore: () => void,
-}) => {
-    return (
-        <div
-            css={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'flex-start',
-            }}
-        >
-            <div css={{ flex: 1, padding: '8px 16px', fontStyle: 'italic' }}>
-                {item.text}
-            </div>
-            <button onClick={() => onRestore()}>
-                <Undo />
-            </button>
-        </div>
-    );
-};
+// const ArchivedPrayerItem = ({
+//     item,
+//     onRestore,
+// }: {
+//     item: Item,
+//     onRestore: () => void,
+// }) => {
+//     return (
+//         <div
+//             css={{
+//                 display: 'flex',
+//                 flexDirection: 'row',
+//                 alignItems: 'flex-start',
+//             }}
+//         >
+//             <div css={{ flex: 1, padding: '8px 16px', fontStyle: 'italic' }}>
+//                 {item.text}
+//             </div>
+//             <button onClick={() => onRestore()}>
+//                 <Undo />
+//             </button>
+//         </div>
+//     );
+// };
 
 const PrayerItem = ({
     item,
@@ -283,7 +326,13 @@ const PrayerItem = ({
                             padding: 8,
                         }}
                     />
-                    <button onClick={() => onArchive()}>
+                    <button
+                        onClick={evt => {
+                            evt.stopPropagation();
+                            evt.preventDefault();
+                            onArchive();
+                        }}
+                    >
                         <Archive />
                     </button>
                 </div>

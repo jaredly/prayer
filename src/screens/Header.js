@@ -5,8 +5,9 @@ import { jsx } from '@emotion/core';
 import LogOut from 'react-ionicons/lib/MdLogOut';
 import Menu from 'react-ionicons/lib/MdMenu';
 import Colors from './Colors';
+import type { RemoteStorageT } from '../';
 
-const Header = ({ rs, onMenu }: { rs: any, onMenu: () => void }) => {
+const Header = ({ rs, onMenu }: { rs: RemoteStorageT, onMenu: () => void }) => {
     if (!rs.remote.userAddress) {
         return null;
     }

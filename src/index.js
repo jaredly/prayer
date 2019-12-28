@@ -1,74 +1,97 @@
 // @flow
 
-import "regenerator-runtime/runtime";
+import 'regenerator-runtime/runtime';
 import React from 'react';
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom';
 // import Gun from 'gun'
 // magically adds the `Gun.user` stuff
 // import "gun/sea"
 
-import LoadingStateWrapper, {useLoadingState} from './LoadingStateWrapper'
-import {loaded} from './loadingState'
-import {useUser, type UserState, initialUserStatus} from './user'
-import LoginScreen from './screens/Login'
-import HomeScreen from './screens/Home'
-import prayerJournalModule from './prayerJournalModule'
+import LoadingStateWrapper, { useLoadingState } from './LoadingStateWrapper';
+import { loaded } from './loadingState';
+import { useUser, type UserState, initialUserStatus } from './user';
+import LoginScreen from './screens/Login';
+import HomeScreen from './screens/Home';
+import prayerJournalModule, {
+    type PrayerJournalModuleType,
+} from './prayerJournalModule';
 
 import RemoteStorage from 'remotestoragejs';
 
-type AppState = {
-    rs: any,
-    userState: UserState,
-}
+export type RemoteStorageT = {
+    prayerJournal: PrayerJournalModuleType,
+    access: {
+        claim: (string, 'r' | 'rw') => void,
+    },
+    caching: {
+        enable: string => void,
+    },
+    on: (string, any) => void,
+    remote: {
+        userAddress: string,
+        connected: boolean,
+    },
+    disconnect: () => void,
+};
 
-const getInitialState = (rs) => {
-    window.rs = rs
+type AppState = {
+    rs: RemoteStorageT,
+    userState: UserState,
+};
+
+const getInitialState = (rs: RemoteStorageT) => {
+    window.rs = rs;
     rs.access.claim('prayerJournal', 'rw');
-    rs.caching.enable('/prayerJournal/')
+    rs.caching.enable('/prayerJournal/');
     // const widget = new ConnectWidget(rs);
     // widget.attach();
 
     return {
         rs,
-        userState: initialUserStatus(rs)
-    }
-}
+        userState: initialUserStatus(rs),
+    };
+};
 
 const reduce = (state, action) => {
     switch (action.type) {
         case 'login':
-            const userState = action.status(state.userState)
+            const userState = action.status(state.userState);
             // console.log(state, action.status)
-            return {...state, userState}
+            return { ...state, userState };
         case 'logout':
-            return {...state, userState: loaded({type: 'logged-out'})}
+            return { ...state, userState: loaded({ type: 'logged-out' }) };
     }
-    return state
-}
+    return state;
+};
 
 const App = () => {
     const [state, dispatch] = React.useReducer(reduce, null, () =>
-        getInitialState(new RemoteStorage({
-            modules: [prayerJournalModule],
-            changeEvents: {
-                local:    true,
-                window:   true,
-                remote:   true,
-                conflict: true
-            },
-        })),
+        getInitialState(
+            new RemoteStorage({
+                modules: [prayerJournalModule],
+                changeEvents: {
+                    local: true,
+                    window: true,
+                    remote: true,
+                    conflict: true,
+                },
+            }),
+        ),
     );
 
     React.useEffect(() => {
-        const {rs} = state;
+        const { rs } = state;
         rs.on('connected', () => {
             const userAddress = rs.remote.userAddress;
-            dispatch({type: 'login', status: (_) => loaded({type: 'logged-in', user: rs.remote})})
-        })
+            dispatch({
+                type: 'login',
+                status: _ => loaded({ type: 'logged-in', user: rs.remote }),
+            });
+        });
 
         rs.on('disconnected', () => {
-            dispatch({type: 'logout'})
-        })
+            dispatch({ type: 'logout' });
+        });
 
         rs.on('network-offline', () => {
             console.log(`We're offline now.`);
@@ -77,17 +100,17 @@ const App = () => {
         rs.on('network-online', () => {
             console.log(`Hooray, we're back online.`);
         });
-        console.log('initial')
-    }, [state.rs])
+        console.log('initial');
+    }, [state.rs]);
 
     if (
         state.userState.type === 'loaded' &&
         state.userState.data.type === 'logged-in'
     ) {
-        window.user = state.userState.data.user
+        window.user = state.userState.data.user;
         return <HomeScreen rs={state.rs} />;
     } else {
-        console.log(state)
+        console.log(state);
         return (
             <LoginScreen
                 loginStatus={state.userState}
@@ -99,4 +122,4 @@ const App = () => {
 };
 
 // $FlowFixMe
-ReactDOM.render(<App />, document.getElementById('root'))
+ReactDOM.render(<App />, document.getElementById('root'));
