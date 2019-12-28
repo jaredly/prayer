@@ -11,119 +11,22 @@ import Listing from './Listing';
 import PrayerRecorder from './PrayerRecorder';
 import LogOut from 'react-ionicons/lib/MdLogOut';
 import type { RemoteStorageT } from '../';
+import type { Types, Sorted, Route } from './Shell';
 
-const useRSKinds = (rs: RemoteStorageT) => {
-    const [state, setState] = React.useState({});
-    React.useEffect(() => {
-        return rs.prayerJournal.onKinds(kinds => setState(kinds));
-    }, []);
-    return state;
-};
-
-const useRSItems = (rs: RemoteStorageT) => {
-    const [state, setState] = React.useState({});
-    React.useEffect(() => {
-        return rs.prayerJournal.onItems(items => setState(items));
-    }, []);
-    return state;
-};
-
-type Route =
-    | { type: 'item', id: string }
-    | { type: 'prayer', id: string }
-    | { type: 'new-prayer' };
-
-const parsePath = (path: string): ?Route => {
-    if (!path.trim()) {
-        return null;
-    }
-    const [type, id] = path.split('/');
-    if (type === 'item' && id) {
-        return { type: 'item', id };
-    }
-    if (type === 'prayer') {
-        if (id) {
-            return { type: 'prayer', id };
-        }
-        return { type: 'new-prayer' };
-    }
-};
-
-const serializePath = (route: ?Route): ?string => {
-    if (!route) {
-        return null;
-    }
-    switch (route.type) {
-        case 'item':
-            return `item/${route.id}`;
-        case 'prayer':
-            return `prayer/${route.id}`;
-        case 'new-prayer':
-            return 'prayer';
-    }
-    return null;
-};
-
-const HomeScreen = ({ rs }: { rs: RemoteStorageT }) => {
-    const types = useRSKinds(rs);
-    const items = useRSItems(rs);
-    const sorted = {};
-    Object.keys(items).forEach(id => {
-        if (!items[id] || !items[id].active) {
-            return;
-        }
-        const kind = items[id].kind;
-        if (!sorted[kind]) {
-            sorted[kind] = [];
-        }
-        sorted[kind].push(items[id]);
-    });
-
-    const [route, setRoute] = React.useState((): ?Route => {
-        const id = parsePath(window.location.hash.slice(1));
-        if (!id) return null;
-        return id;
-    });
-
-    React.useMemo(() => {
-        const str = serializePath(route);
-        if (str) {
-            window.location.hash = '#' + str;
-        } else {
-            window.location.hash = '';
-        }
-    }, [route]);
-
+const HomeScreen = ({
+    rs,
+    types,
+    sorted,
+    setRoute,
+}: {
+    rs: RemoteStorageT,
+    types: Types,
+    sorted: Sorted,
+    setRoute: Route => void,
+}) => {
     const [adding, setAdding] = React.useState(null);
 
     const [menu, setMenu] = React.useState(false);
-
-    if (route && route.type === 'new-prayer') {
-        return (
-            <PrayerRecorder
-                types={types}
-                sorted={sorted}
-                initial={() => rs.prayerJournal.getTmpRecord()}
-                onDiscard={() => {
-                    rs.prayerJournal.discardTmpRecord();
-                    setRoute(null);
-                }}
-                archiveItem={item => {
-                    rs.prayerJournal.archiveItem(item);
-                }}
-                onClose={() => {
-                    setRoute(null);
-                }}
-                onSave={record => {
-                    rs.prayerJournal.putTmpRecord(record);
-                }}
-                onFinish={record => {
-                    rs.prayerJournal.finishRecord(record);
-                    setRoute(null);
-                }}
-            />
-        );
-    }
 
     if (Object.keys(types).length === 0) {
         return (
@@ -145,25 +48,6 @@ const HomeScreen = ({ rs }: { rs: RemoteStorageT }) => {
                     Add default item types
                 </button>
             </div>
-        );
-    }
-
-    if (route && route.type === 'item' && items[route.id]) {
-        const item = items[route.id];
-        return (
-            <ViewItem
-                item={item}
-                type={types[item.kind]}
-                onClose={() => setRoute(null)}
-                onDelete={() => {
-                    rs.prayerJournal.removeItem(item.id);
-                    // deleteItem(item);
-                    setRoute(null);
-                }}
-                onChange={item => {
-                    rs.prayerJournal.putItem(item);
-                }}
-            />
         );
     }
 
@@ -251,13 +135,27 @@ const HomeScreen = ({ rs }: { rs: RemoteStorageT }) => {
                     onChange={a => setAdding(a)}
                 />
             ) : null}
-            {menu ? <Menu rs={rs} onClose={() => setMenu(false)} /> : null}
+            {menu ? (
+                <Menu
+                    rs={rs}
+                    onClose={() => setMenu(false)}
+                    setRoute={setRoute}
+                />
+            ) : null}
         </div>
     );
 };
 
-const Menu = ({ rs, onClose }) => {
+const Menu = ({ rs, onClose, setRoute }) => {
     const items = [
+        {
+            title: 'Archived items',
+            action: () => setRoute({ type: 'archive' }),
+        },
+        {
+            title: 'Categories',
+            action: () => setRoute({ type: 'categories' }),
+        },
         {
             title: (
                 <div>
@@ -297,6 +195,9 @@ const Menu = ({ rs, onClose }) => {
                 }}
                 onMouseDown={evt => evt.stopPropagation()}
             >
+                <div css={{ padding: 16, fontWeight: 'bold' }}>
+                    Fervent Prayer
+                </div>
                 {items.map((item, i) => (
                     <div
                         key={i}

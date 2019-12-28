@@ -11,7 +11,7 @@ import LoadingStateWrapper, { useLoadingState } from './LoadingStateWrapper';
 import { loaded } from './loadingState';
 import { useUser, type UserState, initialUserStatus } from './user';
 import LoginScreen from './screens/Login';
-import HomeScreen from './screens/Home';
+import Shell from './screens/Shell';
 import prayerJournalModule, {
     type PrayerJournalModuleType,
 } from './prayerJournalModule';
@@ -108,7 +108,7 @@ const App = () => {
         state.userState.data.type === 'logged-in'
     ) {
         window.user = state.userState.data.user;
-        return <HomeScreen rs={state.rs} />;
+        return <Shell rs={state.rs} />;
     } else {
         console.log(state);
         return (
