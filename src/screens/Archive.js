@@ -8,6 +8,7 @@ import Colors from './Colors';
 import type { RemoteStorageT } from '../';
 import type { Route, Items, Types } from './Shell';
 import Undo from 'react-ionicons/lib/MdUndo';
+import ArrowBack from 'react-ionicons/lib/MdArrowBack';
 
 const Archive = ({
     types,
@@ -17,7 +18,7 @@ const Archive = ({
 }: {
     types: Types,
     items: Items,
-    setRoute: Route => void,
+    setRoute: (?Route) => void,
     rs: RemoteStorageT,
 }) => {
     return (
@@ -31,11 +32,21 @@ const Archive = ({
         >
             <div
                 css={{
+                    display: 'flex',
                     backgroundColor: Colors.accent,
-                    padding: 16,
+                    alignItems: 'center',
                 }}
             >
-                Archived items
+                <div onClick={() => setRoute(null)} css={{ padding: 16 }}>
+                    <ArrowBack />
+                </div>
+                <div
+                    css={{
+                        padding: 16,
+                    }}
+                >
+                    Archived items
+                </div>
             </div>
             <div
                 css={{
@@ -53,15 +64,11 @@ const Archive = ({
                     )
                     .map(id => (
                         <div
-                            css={{
-                                padding: '8px 16px',
-                                '&:hover': {
-                                    backgroundColor: Colors.hover,
-                                },
-                                '&:active': {
-                                    backgroundColor: Colors.hover,
-                                },
-                            }}
+                            css={
+                                {
+                                    // padding: '8px 16px',
+                                }
+                            }
                             key={id}
                         >
                             <div
@@ -75,12 +82,31 @@ const Archive = ({
                                     css={{
                                         flex: 1,
                                         fontSize: 16,
-                                        padding: '8px 16px',
+                                        padding: '16px',
                                     }}
                                 >
                                     {maybeBlank(items[id].text)}
+                                    <div
+                                        css={{ fontSize: '80%', marginTop: 8 }}
+                                    >
+                                        {new Date(
+                                            items[id].modifiedDate ||
+                                                items[id].createdDate,
+                                        ).toDateString()}
+                                    </div>
                                 </div>
                                 <button
+                                    css={{
+                                        padding: '16px 20px',
+                                        border: 'none',
+                                        backgroundColor: 'transparent',
+                                        '&:hover': {
+                                            backgroundColor: Colors.hover,
+                                        },
+                                        '&:active': {
+                                            backgroundColor: Colors.hover,
+                                        },
+                                    }}
                                     onClick={() =>
                                         rs.prayerJournal.unarchiveItem(
                                             items[id],
