@@ -10,6 +10,7 @@ import Colors from './Colors';
 import Listing from './Listing';
 import PrayerRecorder from './PrayerRecorder';
 import Home from './Home';
+import Archive from './Archive';
 import type { RemoteStorageT } from '../';
 
 const useRSKinds = (rs: RemoteStorageT) => {
@@ -29,6 +30,7 @@ const useRSItems = (rs: RemoteStorageT) => {
 };
 
 export type Types = { [key: string]: Kind };
+export type Items = { [key: string]: Item };
 export type Sorted = { [key: string]: Array<Item> };
 
 export type Route =
@@ -37,6 +39,13 @@ export type Route =
     | { type: 'new-prayer' }
     | { type: 'archive' }
     | { type: 'categories' };
+
+const routeEq = (one: ?Route, two: ?Route) => {
+    if (!one || !two) {
+        return one === two;
+    }
+    return one.type === two.type;
+};
 
 const parsePath = (path: string): ?Route => {
     if (!path.trim()) {
@@ -100,6 +109,20 @@ const Shell = ({ rs }: { rs: RemoteStorageT }) => {
         return id;
     });
 
+    const routeRef = React.useRef(route);
+    React.useMemo(() => {
+        routeRef.current = route;
+    }, [route]);
+
+    React.useEffect(() => {
+        window.addEventListener('hashchange', () => {
+            const newRoute = parsePath(window.location.hash.slice(1));
+            if (!routeEq(newRoute, routeRef.current)) {
+                setRoute(newRoute);
+            }
+        });
+    }, []);
+
     React.useMemo(() => {
         const str = serializePath(route);
         if (str) {
@@ -158,6 +181,12 @@ const Shell = ({ rs }: { rs: RemoteStorageT }) => {
                     rs.prayerJournal.putItem(item);
                 }}
             />
+        );
+    }
+
+    if (route.type === 'archive') {
+        return (
+            <Archive setRoute={setRoute} types={types} items={items} rs={rs} />
         );
     }
 
