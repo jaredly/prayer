@@ -10,7 +10,7 @@ import type { Route, Items, Types } from './Shell';
 import Undo from 'react-ionicons/lib/MdUndo';
 import ArrowBack from 'react-ionicons/lib/MdArrowBack';
 
-const useRecords = (rs: RemoteStorageT) => {
+export const useRecords = (rs: RemoteStorageT) => {
     const [state, setState] = React.useState({});
     React.useEffect(() => {
         rs.prayerJournal.getRecords().then(

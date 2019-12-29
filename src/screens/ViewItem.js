@@ -9,6 +9,9 @@ import Textarea from './Textarea';
 import Close from 'react-ionicons/lib/MdClose';
 import Checkmark from 'react-ionicons/lib/MdCheckmark';
 import Create from 'react-ionicons/lib/MdCreate';
+import { useRecords } from './Records';
+import type { RemoteStorageT } from '../';
+import Colors from './Colors';
 
 export const maybeBlank = (text: string) => {
     if (!text.trim()) {
@@ -92,13 +95,16 @@ const ViewItem = ({
     onClose,
     onDelete,
     onChange,
+    rs,
 }: {
     item: Item,
     type: ?Kind,
     onClose: () => void,
     onDelete: () => void,
     onChange: (item: Item) => void,
+    rs: RemoteStorageT,
 }) => {
+    const records = useRecords(rs);
     return (
         <div
             css={{
@@ -133,15 +139,49 @@ const ViewItem = ({
                         fontSize: '80%',
                         marginTop: 12,
                         padding: '8px 16px',
+                        marginBottom: 16,
                         display: 'flex',
                         flexDirection: 'row',
                         alignItems: 'center',
                         justifyContent: 'space-between',
                     }}
                 >
-                    {new Date(item.createdDate).toDateString()}
+                    Created {new Date(item.createdDate).toDateString()}
                     <MaybeDelete onDelete={onDelete} />
                 </div>
+            </div>
+            <div
+                css={{
+                    flex: 1,
+                    overflow: 'auto',
+                    minHeight: 0,
+                }}
+            >
+                {Object.keys(records)
+                    .filter(k => !!records[k].notes[item.id])
+                    .sort(
+                        (a, b) =>
+                            records[b].createdDate - records[a].createdDate,
+                    )
+                    .map(id => (
+                        <div
+                            key={id}
+                            css={{ paddingLeft: 16, marginBottom: 16 }}
+                        >
+                            <div
+                                css={{
+                                    fontSize: '80%',
+                                    color: Colors.grayText,
+                                    marginBottom: 8,
+                                }}
+                            >
+                                {new Date(
+                                    records[id].createdDate,
+                                ).toLocaleString()}
+                            </div>
+                            {records[id].notes[item.id]}
+                        </div>
+                    ))}
             </div>
         </div>
     );

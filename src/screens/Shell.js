@@ -183,6 +183,7 @@ const Shell = ({ rs }: { rs: RemoteStorageT }) => {
         return (
             <ViewItem
                 item={item}
+                rs={rs}
                 type={types[item.kind]}
                 onClose={() => setRoute(null)}
                 onDelete={() => {
