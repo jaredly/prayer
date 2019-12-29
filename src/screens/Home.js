@@ -38,10 +38,10 @@ const HomeScreen = ({
                 </div>
                 <button
                     onClick={() => {
-                        // rs.prayerJournal.addKind
+                        // rs.prayerJournal.putKind
                         // const types = user.get('types');
                         defaultTypes.forEach(t => {
-                            rs.prayerJournal.addKind(t);
+                            rs.prayerJournal.putKind(t);
                         });
                     }}
                 >

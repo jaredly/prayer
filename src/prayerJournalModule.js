@@ -274,7 +274,7 @@ const prayerJournalModule = {
                     ]);
                     return record;
                 },
-                addKind: async (kind: Kind) => {
+                putKind: async (kind: Kind) => {
                     var path = kindPath(kind.id); // use hashed URL as filename as well
                     await priv.storeObject('item-kind', path, kind);
                     return kind;

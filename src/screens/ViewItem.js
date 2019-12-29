@@ -24,8 +24,10 @@ const MaybeDelete = ({ onDelete }: { onDelete: () => void }) => {
     const [really, setReally] = React.useState(false);
     if (really) {
         return (
-            <div>
-                <button onClick={() => onDelete()}>Really delete</button>
+            <div css={{ display: 'flex', flexDirection: 'row' }}>
+                <button onClick={() => onDelete()} css={{ color: 'red' }}>
+                    Really delete
+                </button>
                 <button onClick={() => setReally(false)}>Just kidding</button>
             </div>
         );
@@ -117,7 +119,7 @@ const ViewItem = ({
             <div
                 css={{
                     fontWeight: 'bold',
-                    padding: '4px 8px',
+                    padding: '8px 16px',
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'center',
@@ -127,7 +129,7 @@ const ViewItem = ({
                 {maybeBlank(type ? type.title : '')}
                 <button
                     onClick={() => onClose()}
-                    css={{ padding: 0, margin: 0 }}
+                    css={{ padding: 8, margin: 0 }}
                 >
                     <Close />
                 </button>

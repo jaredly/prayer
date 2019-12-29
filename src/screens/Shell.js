@@ -12,6 +12,7 @@ import PrayerRecorder from './PrayerRecorder';
 import Home from './Home';
 import Archive from './Archive';
 import Records from './Records';
+import Categories from './Categories';
 import type { RemoteStorageT } from '../';
 
 const useRSKinds = (rs: RemoteStorageT) => {
@@ -201,6 +202,17 @@ const Shell = ({ rs }: { rs: RemoteStorageT }) => {
     if (route.type === 'archive') {
         return (
             <Archive setRoute={setRoute} types={types} items={items} rs={rs} />
+        );
+    }
+
+    if (route.type === 'categories') {
+        return (
+            <Categories
+                setRoute={setRoute}
+                types={types}
+                items={items}
+                rs={rs}
+            />
         );
     }
 
