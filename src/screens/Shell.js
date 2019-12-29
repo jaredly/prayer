@@ -11,6 +11,7 @@ import Listing from './Listing';
 import PrayerRecorder from './PrayerRecorder';
 import Home from './Home';
 import Archive from './Archive';
+import Records from './Records';
 import type { RemoteStorageT } from '../';
 
 const useRSKinds = (rs: RemoteStorageT) => {
@@ -36,6 +37,7 @@ export type Sorted = { [key: string]: Array<Item> };
 export type Route =
     | { type: 'item', id: string }
     | { type: 'prayer', id: string }
+    | { type: 'records' }
     | { type: 'new-prayer' }
     | { type: 'archive' }
     | { type: 'categories' };
@@ -67,6 +69,9 @@ const parsePath = (path: string): ?Route => {
     if (type === 'categories') {
         return { type: 'categories' };
     }
+    if (type === 'records') {
+        return { type: 'records' };
+    }
 };
 
 const serializePath = (route: ?Route): ?string => {
@@ -84,6 +89,8 @@ const serializePath = (route: ?Route): ?string => {
             return 'categories';
         case 'archive':
             return 'archive';
+        case 'records':
+            return 'records';
     }
     return null;
 };
@@ -162,6 +169,12 @@ const Shell = ({ rs }: { rs: RemoteStorageT }) => {
                     setRoute(null);
                 }}
             />
+        );
+    }
+
+    if (route.type === 'records') {
+        return (
+            <Records setRoute={setRoute} types={types} items={items} rs={rs} />
         );
     }
 

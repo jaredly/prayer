@@ -265,6 +265,7 @@ const prayerJournalModule = {
                         id: Math.random()
                             .toString(16)
                             .slice(2),
+                        finishedDate: Date.now(),
                     };
                     const path = recordPath(record.id);
                     await Promise.all([
@@ -290,6 +291,13 @@ const prayerJournalModule = {
                 },
                 removeItem: async (id: string) => {
                     await priv.remove(itemPath(id));
+                },
+                getRecords: (): Promise<{ [key: string]: Record }> => {
+                    return new Promise((res, rej) =>
+                        priv.getAll('records/').then(listing => {
+                            res(listing);
+                        }),
+                    );
                 },
                 getKind: (id: string) => priv.getObject(kindPath(id)),
                 onKinds: (fn: (Map<Kind>) => void) => onPath('kinds', fn),

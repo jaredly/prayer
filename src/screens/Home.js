@@ -149,6 +149,10 @@ const HomeScreen = ({
 const Menu = ({ rs, onClose, setRoute }) => {
     const items = [
         {
+            title: 'Records',
+            action: () => setRoute({ type: 'records' }),
+        },
+        {
             title: 'Archived items',
             action: () => setRoute({ type: 'archive' }),
         },

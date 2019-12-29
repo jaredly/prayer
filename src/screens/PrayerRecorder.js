@@ -99,7 +99,7 @@ const PrayerRecorder = ({
                     backgroundColor: Colors.accent,
                 }}
             >
-                Prayer record {new Date(prayer.createdDate).toDateString()}
+                Prayer record {new Date(prayer.createdDate).toLocaleString()}
             </div>
             <div
                 css={{
