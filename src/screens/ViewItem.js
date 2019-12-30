@@ -161,7 +161,26 @@ const ViewItem = ({
                         justifyContent: 'space-between',
                     }}
                 >
-                    Created {new Date(item.createdDate).toDateString()}
+                    <span css={{ color: Colors.grayText }}>
+                        Created {new Date(item.createdDate).toDateString()}
+                    </span>
+
+                    {item.active ? (
+                        <button
+                            onClick={() => {
+                                rs.prayerJournal.archiveItem(item);
+                                onClose();
+                            }}
+                        >
+                            Archive
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => rs.prayerJournal.unarchiveItem(item)}
+                        >
+                            Unarchive
+                        </button>
+                    )}
                     <MaybeDelete onDelete={onDelete} />
                 </div>
             </div>
@@ -280,7 +299,7 @@ const AddThought = ({ onAdd }) => {
         );
     }
     return (
-        <div>
+        <div css={{ border: `8px solid ${Colors.accent}` }}>
             <Textarea
                 placeholder="Enter text"
                 minRows={3}
@@ -292,18 +311,23 @@ const AddThought = ({ onAdd }) => {
                 }}
                 onChange={setAdding}
             />
-            <button
-                onClick={() => {
-                    onAdd(adding);
-                    setAdding(null);
-                }}
-                css={{ fontSize: 20 }}
-            >
-                Add thought
-            </button>
-            <button onClick={() => setAdding(null)} css={{ fontSize: 20 }}>
-                Discard
-            </button>
+            <div css={{ display: 'flex' }}>
+                <button
+                    onClick={() => {
+                        onAdd(adding);
+                        setAdding(null);
+                    }}
+                    css={{ fontSize: 20, flex: 1, padding: 8 }}
+                >
+                    Add thought
+                </button>
+                <button
+                    onClick={() => setAdding(null)}
+                    css={{ fontSize: 20, color: 'red', flex: 1, padding: 8 }}
+                >
+                    Discard
+                </button>
+            </div>
         </div>
     );
 };

@@ -59,7 +59,7 @@ const Archive = ({
                     .filter(k => !items[k].active)
                     .sort(
                         (a, b) =>
-                            (items[a].modifiedDate || items[a].createdDate) -
+                            (items[b].modifiedDate || items[b].createdDate) -
                             (items[a].modifiedDate || items[a].createdDate),
                     )
                     .map(id => (

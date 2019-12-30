@@ -16,7 +16,7 @@
     },
     "cache": {
         "swDest": "sw.js",
-        "inDev": true
+        "inDev": false
     },
     "devDependencies": {
         "parcel-plugin-sw-cache": "^0.3.1"

@@ -28,29 +28,6 @@ const HomeScreen = ({
 
     const [menu, setMenu] = React.useState(false);
 
-    if (Object.keys(types).length === 0) {
-        return (
-            <div>
-                <div style={{ display: 'flex' }}>
-                    {defaultTypes.map((t, i) => (
-                        <div key={i}>{t.title}</div>
-                    ))}
-                </div>
-                <button
-                    onClick={() => {
-                        // rs.prayerJournal.putKind
-                        // const types = user.get('types');
-                        defaultTypes.forEach(t => {
-                            rs.prayerJournal.putKind(t);
-                        });
-                    }}
-                >
-                    Add default item types
-                </button>
-            </div>
-        );
-    }
-
     return (
         <div
             css={{
@@ -77,6 +54,7 @@ const HomeScreen = ({
                     }}
                 >
                     <Listing
+                        rs={rs}
                         setShowing={id => setRoute({ type: 'item', id })}
                         sorted={sorted}
                         types={types}

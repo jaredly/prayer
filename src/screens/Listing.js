@@ -7,6 +7,7 @@ import Header from './Header';
 import Adder from './Adder';
 import ViewItem, { maybeBlank } from './ViewItem';
 import Colors from './Colors';
+import type { RemoteStorageT } from '../';
 
 export const cmp = (a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0);
 
@@ -15,12 +16,37 @@ const Listing = ({
     onAdd,
     setShowing,
     sorted,
+    rs,
 }: {
     types: { [key: string]: Kind },
     onAdd: string => void,
     setShowing: string => void,
     sorted: { [key: string]: Array<Item> },
+    rs: RemoteStorageT,
 }) => {
+    if (Object.keys(types).length === 0) {
+        return (
+            <div>
+                <div style={{ display: 'flex' }}>
+                    {defaultTypes.map((t, i) => (
+                        <div key={i}>{t.title}</div>
+                    ))}
+                </div>
+                <button
+                    onClick={() => {
+                        // rs.prayerJournal.putKind
+                        // const types = user.get('types');
+                        defaultTypes.forEach(t => {
+                            rs.prayerJournal.putKind(t);
+                        });
+                    }}
+                >
+                    Add default item types
+                </button>
+            </div>
+        );
+    }
+
     return (
         <>
             {Object.keys(types)
