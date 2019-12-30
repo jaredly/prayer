@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<body>
+    <canvas id="canvas"></canvas>
+    <script>
+        const size = 512;
+        canvas.width = size;
+        canvas.height = size;
+        ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#aaf';
+        ctx.fillRect(0, 0, size, size);
+        ctx.font = `bold ${parseInt(size * 0.8)}px system-ui`;
+        ctx.textAlign = 'center';
+        ctx.fillStyle = 'black';
+        const text = 'P';
+        const measure = ctx.measureText(text);
+        ctx.fillText(
+            text,
+            size / 2,
+            size / 2 + measure.actualBoundingBoxAscent / 2,
+        );
+    </script>
+</body>
