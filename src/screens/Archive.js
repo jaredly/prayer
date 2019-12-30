@@ -70,6 +70,7 @@ const Archive = ({
                                 }
                             }
                             key={id}
+                            onClick={() => setRoute({ type: 'item', id })}
                         >
                             <div
                                 css={{
@@ -107,11 +108,13 @@ const Archive = ({
                                             backgroundColor: Colors.hover,
                                         },
                                     }}
-                                    onClick={() =>
+                                    onClick={evt => {
+                                        evt.preventDefault();
+                                        evt.stopPropagation();
                                         rs.prayerJournal.unarchiveItem(
                                             items[id],
-                                        )
-                                    }
+                                        );
+                                    }}
                                 >
                                     <Undo />
                                 </button>
