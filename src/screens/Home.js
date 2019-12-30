@@ -91,7 +91,7 @@ const HomeScreen = ({
                                 createdDate: Date.now(),
                                 modifiedDate: Date.now(),
                                 activityHistory: [],
-                                comments: [],
+                                thoughts: [],
                             })
                         }
                     />

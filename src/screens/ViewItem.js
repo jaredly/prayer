@@ -12,6 +12,7 @@ import Create from 'react-ionicons/lib/MdCreate';
 import { useRecords } from './Records';
 import type { RemoteStorageT } from '../';
 import Colors from './Colors';
+import ArrowBack from 'react-ionicons/lib/MdArrowBack';
 
 export const maybeBlank = (text: string) => {
     if (!text.trim()) {
@@ -118,6 +119,24 @@ const ViewItem = ({
         >
             <div
                 css={{
+                    display: 'flex',
+                    backgroundColor: Colors.accent,
+                    alignItems: 'center',
+                }}
+            >
+                <div onClick={() => onClose()} css={{ padding: 16 }}>
+                    <ArrowBack />
+                </div>
+                <div
+                    css={{
+                        padding: 16,
+                    }}
+                >
+                    Edit item
+                </div>
+            </div>
+            <div
+                css={{
                     fontWeight: 'bold',
                     padding: '8px 16px',
                     display: 'flex',
@@ -127,12 +146,6 @@ const ViewItem = ({
                 }}
             >
                 {maybeBlank(type ? type.title : '')}
-                <button
-                    onClick={() => onClose()}
-                    css={{ padding: 8, margin: 0 }}
-                >
-                    <Close />
-                </button>
             </div>
             <div>
                 <Text onChange={onChange} item={item} />
@@ -161,31 +174,138 @@ const ViewItem = ({
             >
                 {Object.keys(records)
                     .filter(k => !!records[k].notes[item.id])
+                    .map(id => ({ type: 'record', id }))
+                    .concat(
+                        item.thoughts
+                            ? item.thoughts.map(thought => ({
+                                  type: 'thought',
+                                  thought,
+                              }))
+                            : [],
+                    )
                     .sort(
                         (a, b) =>
-                            records[b].createdDate - records[a].createdDate,
+                            (b.type === 'record'
+                                ? records[b.id].createdDate
+                                : b.thought.date) -
+                            (a.type === 'record'
+                                ? records[a.id].createdDate
+                                : a.thought.date),
                     )
-                    .map(id => (
-                        <div
-                            key={id}
-                            css={{ paddingLeft: 16, marginBottom: 16 }}
-                        >
+                    .map((entry, i) =>
+                        entry.type === 'record' ? (
                             <div
+                                key={entry.id}
                                 css={{
-                                    fontSize: '80%',
-                                    color: Colors.grayText,
-                                    marginBottom: 8,
+                                    paddingLeft: 16,
+                                    marginBottom: 16,
+                                    paddingRight: 16,
                                 }}
                             >
-                                {new Date(
-                                    records[id].createdDate,
-                                ).toLocaleString()}
+                                <div
+                                    css={{
+                                        fontSize: '80%',
+                                        color: Colors.grayText,
+                                        marginBottom: 8,
+                                    }}
+                                >
+                                    {new Date(
+                                        records[entry.id].createdDate,
+                                    ).toLocaleString()}
+                                </div>
+                                {records[entry.id].notes[item.id]}
                             </div>
-                            {records[id].notes[item.id]}
-                        </div>
-                    ))}
+                        ) : (
+                            <div
+                                key={i}
+                                css={{
+                                    paddingLeft: 16,
+                                    marginBottom: 16,
+                                    paddingRight: 16,
+                                }}
+                            >
+                                <div
+                                    css={{
+                                        fontSize: '80%',
+                                        color: Colors.grayText,
+                                        marginBottom: 8,
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                    }}
+                                >
+                                    {new Date(
+                                        entry.thought.date,
+                                    ).toLocaleString()}
+                                    <span>thought</span>
+                                </div>
+                                {entry.thought.text}
+                            </div>
+                        ),
+                    )}
             </div>
+            <AddThought
+                onAdd={text =>
+                    onChange({
+                        ...item,
+                        thoughts: (item.thoughts || []).concat([
+                            {
+                                text,
+                                date: Date.now(),
+                            },
+                        ]),
+                    })
+                }
+            />
         </div>
     );
 };
+
+const AddThought = ({ onAdd }) => {
+    const [adding, setAdding] = React.useState(null);
+    if (adding == null) {
+        return (
+            <div css={{ display: 'flex', flexDirection: 'column' }}>
+                <button
+                    css={{
+                        backgroundColor: Colors.accent,
+                        fontSize: 20,
+                        padding: 8,
+                        alignSelf: 'stretch',
+                    }}
+                    onClick={() => setAdding('')}
+                >
+                    Add thought
+                </button>
+            </div>
+        );
+    }
+    return (
+        <div>
+            <Textarea
+                placeholder="Enter text"
+                minRows={3}
+                maxRows={10}
+                value={adding}
+                css={{
+                    fontSize: 20,
+                    padding: 8,
+                }}
+                onChange={setAdding}
+            />
+            <button
+                onClick={() => {
+                    onAdd(adding);
+                    setAdding(null);
+                }}
+                css={{ fontSize: 20 }}
+            >
+                Add thought
+            </button>
+            <button onClick={() => setAdding(null)} css={{ fontSize: 20 }}>
+                Discard
+            </button>
+        </div>
+    );
+};
+
 export default ViewItem;

@@ -75,6 +75,7 @@ export type Item = {
     createdDate: number,
     modifiedDate: ?number,
     activityHistory: Array<{ active: boolean, date: number }>,
+    thoughts: Array<{ text: string, date: number }>,
     // comments: Array<{
     //     text: string,
     //     date: number,
@@ -102,14 +103,13 @@ const itemSchema = {
                 required: ['active', 'date'],
             },
         },
-        comments: {
+        thoughts: {
             type: 'array',
             items: {
                 type: 'object',
                 properties: {
                     text: { type: 'string' },
                     date: { type: 'number' },
-                    inReplyTo: { type: 'string' },
                 },
                 required: ['text', 'date'],
             },
@@ -123,7 +123,7 @@ const itemSchema = {
         'modifiedDate',
         'active',
         'activityHistory',
-        'comments',
+        'thoughts',
     ],
 };
 
