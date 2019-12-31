@@ -39,7 +39,23 @@ type AppState = {
     userState: UserState,
 };
 
-const getInitialState = (rs: RemoteStorageT) => {
+const config = require('./config.json');
+
+const getInitialState = () => {
+    const rs = new RemoteStorage({
+        modules: [prayerJournalModule],
+        changeEvents: {
+            local: true,
+            window: true,
+            remote: true,
+            conflict: true,
+        },
+    });
+    console.log('config', config);
+    rs.setApiKeys({
+        googledrive: config['google-client-id'],
+        dropbox: config['dropbox-app-key'],
+    });
     window.rs = rs;
     rs.access.claim('prayerJournal', 'rw');
     rs.caching.enable('/prayerJournal/');
@@ -66,17 +82,7 @@ const reduce = (state, action) => {
 
 const App = () => {
     const [state, dispatch] = React.useReducer(reduce, null, () =>
-        getInitialState(
-            new RemoteStorage({
-                modules: [prayerJournalModule],
-                changeEvents: {
-                    local: true,
-                    window: true,
-                    remote: true,
-                    conflict: true,
-                },
-            }),
-        ),
+        getInitialState(),
     );
 
     React.useEffect(() => {
