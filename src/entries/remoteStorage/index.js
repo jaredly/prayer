@@ -105,8 +105,6 @@ const getInitialState = () => {
     window.rs = rs;
     rs.access.claim('prayerJournal', 'rw');
     rs.caching.enable('/prayerJournal/');
-    // const widget = new ConnectWidget(rs);
-    // widget.attach();
 
     return {
         rs,
