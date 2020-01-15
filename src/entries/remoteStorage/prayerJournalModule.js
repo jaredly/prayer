@@ -7,8 +7,8 @@ import {
     itemKindSchema,
     recordSchema,
     emptyRecord,
-} from '../types';
-import type { Item, Kind, Record } from '../types';
+} from '../../types';
+import type { Item, Kind, Record } from '../../types';
 
 const prayerJournalModule = {
     name: 'prayerJournal',

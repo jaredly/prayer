@@ -17,7 +17,7 @@ import { createApi, type PrayerJournalApi } from '../../db/prayerJournalApi';
 import { type Collection } from '../../db/apiInterface';
 import prayerJournalModule, {
     type PrayerJournalModuleType,
-} from '../../db/prayerJournalModule';
+} from './prayerJournalModule';
 
 import { wrapLoadingState } from '../../LoadingStateWrapper';
 import { type LoadingState } from '../../loadingState';
