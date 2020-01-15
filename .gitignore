@@ -1,5 +1,5 @@
 node_modules
 .cache
 dist
-src/config.json
+src/entries/**/*.json
 

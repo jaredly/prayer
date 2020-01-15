@@ -2,7 +2,7 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import React from 'react';
-import { defaultTypes, type Item, type Kind } from '../prayerJournalModule';
+import { defaultTypes, type Item, type Kind } from '../types';
 import Header from './Header';
 import Adder from './Adder';
 import ViewItem, { maybeBlank } from './ViewItem';
@@ -13,20 +13,20 @@ import Home from './Home';
 import Archive from './Archive';
 import Records from './Records';
 import Categories from './Categories';
-import type { RemoteStorageT } from '../';
+import type { PrayerJournalApi } from '../db/PrayerJournalApi';
 
-const useRSKinds = (rs: RemoteStorageT) => {
+const useRSKinds = (api: PrayerJournalApi) => {
     const [state, setState] = React.useState({});
     React.useEffect(() => {
-        return rs.prayerJournal.onKinds(kinds => setState(kinds));
+        return api.onKinds(kinds => setState(kinds));
     }, []);
     return state;
 };
 
-const useRSItems = (rs: RemoteStorageT) => {
+const useRSItems = api => {
     const [state, setState] = React.useState({});
     React.useEffect(() => {
-        return rs.prayerJournal.onItems(items => setState(items));
+        return api.onItems(items => setState(items));
     }, []);
     return state;
 };
@@ -96,9 +96,9 @@ const serializePath = (route: ?Route): ?string => {
     return null;
 };
 
-const Shell = ({ rs }: { rs: RemoteStorageT }) => {
-    const types = useRSKinds(rs);
-    const items = useRSItems(rs);
+const Shell = ({ api }: { api: PrayerJournalApi }) => {
+    const types = useRSKinds(api);
+    const items = useRSItems(api);
     const sorted = {};
     Object.keys(items).forEach(id => {
         if (!items[id] || !items[id].active) {
@@ -142,7 +142,7 @@ const Shell = ({ rs }: { rs: RemoteStorageT }) => {
 
     if (!route) {
         return (
-            <Home setRoute={setRoute} types={types} sorted={sorted} rs={rs} />
+            <Home setRoute={setRoute} types={types} sorted={sorted} api={api} />
         );
     }
 
@@ -151,22 +151,22 @@ const Shell = ({ rs }: { rs: RemoteStorageT }) => {
             <PrayerRecorder
                 types={types}
                 sorted={sorted}
-                initial={() => rs.prayerJournal.getTmpRecord()}
+                initial={() => api.getTmpRecord()}
                 onDiscard={() => {
-                    rs.prayerJournal.discardTmpRecord();
+                    api.discardTmpRecord();
                     setRoute(null);
                 }}
                 archiveItem={item => {
-                    rs.prayerJournal.archiveItem(item);
+                    api.archiveItem(item);
                 }}
                 onClose={() => {
                     setRoute(null);
                 }}
                 onSave={record => {
-                    rs.prayerJournal.putTmpRecord(record);
+                    api.putTmpRecord(record);
                 }}
                 onFinish={record => {
-                    rs.prayerJournal.finishRecord(record);
+                    api.finishRecord(record);
                     setRoute(null);
                 }}
             />
@@ -175,7 +175,12 @@ const Shell = ({ rs }: { rs: RemoteStorageT }) => {
 
     if (route.type === 'records') {
         return (
-            <Records setRoute={setRoute} types={types} items={items} rs={rs} />
+            <Records
+                setRoute={setRoute}
+                types={types}
+                items={items}
+                api={api}
+            />
         );
     }
 
@@ -184,16 +189,16 @@ const Shell = ({ rs }: { rs: RemoteStorageT }) => {
         return (
             <ViewItem
                 item={item}
-                rs={rs}
+                api={api}
                 type={types[item.kind]}
                 onClose={() => setRoute(null)}
                 onDelete={() => {
-                    rs.prayerJournal.removeItem(item.id);
+                    api.removeItem(item.id);
                     // deleteItem(item);
                     setRoute(null);
                 }}
                 onChange={item => {
-                    rs.prayerJournal.putItem(item);
+                    api.putItem(item);
                 }}
             />
         );
@@ -201,7 +206,12 @@ const Shell = ({ rs }: { rs: RemoteStorageT }) => {
 
     if (route.type === 'archive') {
         return (
-            <Archive setRoute={setRoute} types={types} items={items} rs={rs} />
+            <Archive
+                setRoute={setRoute}
+                types={types}
+                items={items}
+                api={api}
+            />
         );
     }
 
@@ -211,13 +221,13 @@ const Shell = ({ rs }: { rs: RemoteStorageT }) => {
                 setRoute={setRoute}
                 types={types}
                 items={items}
-                rs={rs}
+                api={api}
             />
         );
     }
 
     // umm unhandled route I guess
-    return <Home setRoute={setRoute} types={types} sorted={sorted} rs={rs} />;
+    return <Home setRoute={setRoute} types={types} sorted={sorted} api={api} />;
 };
 
 export default Shell;

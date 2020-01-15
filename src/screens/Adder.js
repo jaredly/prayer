@@ -2,7 +2,7 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import React from 'react';
-import { defaultTypes, type Item } from '../prayerJournalModule';
+import { defaultTypes, type Item } from '../types';
 import Header from './Header';
 import Textarea from './Textarea';
 import Colors from './Colors';

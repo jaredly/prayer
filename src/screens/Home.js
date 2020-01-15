@@ -2,7 +2,7 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import React from 'react';
-import { defaultTypes, type Item } from '../prayerJournalModule';
+import { defaultTypes, type Item } from '../types';
 import Header from './Header';
 import Adder from './Adder';
 import ViewItem, { maybeBlank } from './ViewItem';
@@ -10,16 +10,16 @@ import Colors from './Colors';
 import Listing from './Listing';
 import PrayerRecorder from './PrayerRecorder';
 import LogOut from 'react-ionicons/lib/MdLogOut';
-import type { RemoteStorageT } from '../';
+import type { PrayerJournalApi } from '../db/PrayerJournalApi';
 import type { Types, Sorted, Route } from './Shell';
 
 const HomeScreen = ({
-    rs,
+    api,
     types,
     sorted,
     setRoute,
 }: {
-    rs: RemoteStorageT,
+    api: PrayerJournalApi,
     types: Types,
     sorted: Sorted,
     setRoute: Route => void,
@@ -37,7 +37,7 @@ const HomeScreen = ({
                 flexDirection: 'column',
             }}
         >
-            <Header rs={rs} onMenu={() => setMenu(true)} />
+            <Header api={api} onMenu={() => setMenu(true)} />
             <div
                 css={{
                     position: 'relative',
@@ -54,7 +54,7 @@ const HomeScreen = ({
                     }}
                 >
                     <Listing
-                        rs={rs}
+                        api={api}
                         setShowing={id => setRoute({ type: 'item', id })}
                         sorted={sorted}
                         types={types}
@@ -103,7 +103,7 @@ const HomeScreen = ({
                     onCancel={() => setAdding(null)}
                     onSave={async (data: Item) => {
                         try {
-                            await rs.prayerJournal.putItem(data);
+                            await api.putItem(data);
                         } catch (e) {
                             return console.error('validation error:', e);
                         }
@@ -115,7 +115,7 @@ const HomeScreen = ({
             ) : null}
             {menu ? (
                 <Menu
-                    rs={rs}
+                    api={api}
                     onClose={() => setMenu(false)}
                     setRoute={setRoute}
                 />
@@ -124,7 +124,7 @@ const HomeScreen = ({
     );
 };
 
-const Menu = ({ rs, onClose, setRoute }) => {
+const Menu = ({ api, onClose, setRoute }) => {
     const items = [
         {
             title: 'Records',
@@ -141,7 +141,7 @@ const Menu = ({ rs, onClose, setRoute }) => {
         {
             title: (
                 <div>
-                    {rs.remote.userAddress}
+                    {api.getUsername()}
                     <div
                         css={{
                             marginTop: 16,
@@ -154,7 +154,7 @@ const Menu = ({ rs, onClose, setRoute }) => {
                     </div>
                 </div>
             ),
-            action: () => rs.disconnect(),
+            action: () => api.logout(),
         },
     ];
     return (

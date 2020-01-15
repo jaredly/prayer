@@ -2,10 +2,10 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import React from 'react';
-import { defaultTypes, type Item, type Kind } from '../prayerJournalModule';
+import { defaultTypes, type Item, type Kind } from '../types';
 import ViewItem, { maybeBlank } from './ViewItem';
 import Colors from './Colors';
-import type { RemoteStorageT } from '../';
+import type { PrayerJournalApi } from '../db/PrayerJournalApi';
 import type { Route, Items, Types } from './Shell';
 import Undo from 'react-ionicons/lib/MdUndo';
 import ArrowBack from 'react-ionicons/lib/MdArrowBack';
@@ -14,12 +14,12 @@ const Archive = ({
     types,
     items,
     setRoute,
-    rs,
+    api,
 }: {
     types: Types,
     items: Items,
     setRoute: (?Route) => void,
-    rs: RemoteStorageT,
+    api: PrayerJournalApi,
 }) => {
     return (
         <div
@@ -111,9 +111,7 @@ const Archive = ({
                                     onClick={evt => {
                                         evt.preventDefault();
                                         evt.stopPropagation();
-                                        rs.prayerJournal.unarchiveItem(
-                                            items[id],
-                                        );
+                                        api.unarchiveItem(items[id]);
                                     }}
                                 >
                                     <Undo />

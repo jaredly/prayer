@@ -1,9 +1,10 @@
 // @flow
 import React from 'react';
-import { type LoadingState } from '../loadingState';
-import LoadingStateWrapper from '../LoadingStateWrapper';
-import { useUser, type UserState } from '../user';
-import type { RemoteStorageT } from '../';
+import { type LoadingState } from '../../loadingState';
+import LoadingStateWrapper from '../../LoadingStateWrapper';
+import { type UserState } from './';
+import type { PrayerJournalApi } from '../../db/PrayerJournalApi';
+import type { RemoteStorageT } from './';
 // import Gun from 'gun'
 // magically adds the `Gun.user` stuff
 // import "gun/sea"

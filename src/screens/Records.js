@@ -2,18 +2,18 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import React from 'react';
-import { defaultTypes, type Item, type Kind } from '../prayerJournalModule';
+import { defaultTypes, type Item, type Kind } from '../types';
 import ViewItem, { maybeBlank } from './ViewItem';
 import Colors from './Colors';
-import type { RemoteStorageT } from '../';
+import type { PrayerJournalApi } from '../db/PrayerJournalApi';
 import type { Route, Items, Types } from './Shell';
 import Undo from 'react-ionicons/lib/MdUndo';
 import ArrowBack from 'react-ionicons/lib/MdArrowBack';
 
-export const useRecords = (rs: RemoteStorageT) => {
+export const useRecords = (api: PrayerJournalApi) => {
     const [state, setState] = React.useState({});
     React.useEffect(() => {
-        rs.prayerJournal.getRecords().then(
+        api.getRecords().then(
             items => setState(items),
             err => {},
         );
@@ -25,14 +25,14 @@ const Records = ({
     types,
     items,
     setRoute,
-    rs,
+    api,
 }: {
     types: Types,
     items: Items,
     setRoute: (?Route) => void,
-    rs: RemoteStorageT,
+    api: PrayerJournalApi,
 }) => {
-    const records = useRecords(rs);
+    const records = useRecords(api);
 
     return (
         <div

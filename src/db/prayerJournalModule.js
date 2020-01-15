@@ -2,156 +2,13 @@
 
 type Map<T> = { [key: string]: T };
 
-export type Kind = {
-    id: string,
-    title: string,
-    description: string,
-    color?: string,
-    icon: string,
-};
-
-const itemKindSchema = {
-    type: 'object',
-    properties: {
-        id: { type: 'string' },
-        title: { type: 'string' },
-        description: { type: 'string' },
-        icon: { type: 'string' },
-        color: { type: 'string' },
-    },
-    required: ['id', 'title', 'icon'],
-};
-
-export const defaultTypes: Array<Kind> = [
-    {
-        id: 'people',
-        title: 'People in need',
-        description: 'People that I know who need help',
-        icon: 'P',
-    },
-    {
-        id: 'questions',
-        title: 'Questions I have',
-        description: 'Probably mostly doctrinal',
-        icon: '?',
-    },
-    {
-        id: 'guidence',
-        title: 'Requests for guidence',
-        description: 'Lead kindly light',
-        icon: 'G',
-    },
-    {
-        id: 'requests',
-        title: 'General requests',
-        description: 'Misc needs, wants, etc.',
-        icon: 'R',
-    },
-    {
-        id: 'gratitude',
-        title: 'Gratitude',
-        description: "Things I'm grateful for today",
-        icon: 'T',
-    },
-    {
-        id: 'gods-hand',
-        title: "God's hand in my life",
-        description: 'and ways he is working through me and others',
-        icon: 'H',
-    },
-    {
-        id: 'experiences',
-        title: 'Processing my experiences',
-        description: 'and reports on events, or plans for the future.',
-        icon: 'E',
-    },
-];
-
-export type Item = {
-    id: string,
-    kind: string, // id
-    text: string,
-    active: boolean,
-    createdDate: number,
-    modifiedDate: ?number,
-    activityHistory: Array<{ active: boolean, date: number }>,
-    thoughts: ?Array<{ text: string, date: number }>,
-    // comments: Array<{
-    //     text: string,
-    //     date: number,
-    //     inReplyTo: string,
-    // }>,
-};
-
-const itemSchema = {
-    type: 'object',
-    properties: {
-        id: { type: 'string' },
-        kind: { type: 'string' },
-        text: { type: 'string' },
-        active: { type: 'boolean' },
-        createdDate: { type: 'number' },
-        modifiedDate: { type: 'number' },
-        activityHistory: {
-            type: 'array',
-            items: {
-                type: 'object',
-                properties: {
-                    active: { type: 'boolean' },
-                    date: { type: 'number' },
-                },
-                required: ['active', 'date'],
-            },
-        },
-        thoughts: {
-            type: 'array',
-            items: {
-                type: 'object',
-                properties: {
-                    text: { type: 'string' },
-                    date: { type: 'number' },
-                },
-                required: ['text', 'date'],
-            },
-        },
-    },
-    required: [
-        'id',
-        'kind',
-        'text',
-        'createdDate',
-        'modifiedDate',
-        'active',
-        'activityHistory',
-    ],
-};
-
-export type Record = {
-    id: string,
-    createdDate: number,
-    finishedDate?: number,
-    notes: { [key: string]: string },
-    generalNotes: string,
-};
-
-const emptyRecord = () => ({
-    id: 'tmp',
-    createdDate: Date.now(),
-    notes: {},
-    generalNotes: '',
-});
-
-const recordSchema = {
-    type: 'object',
-    properties: {
-        id: { type: 'string' },
-        createdDate: { type: 'number' },
-        finishedDate: { type: 'number' },
-        notes: { type: 'object', additionalProperties: { type: 'string' } },
-        generalNotes: { type: 'string' },
-    },
-    required: ['id', 'createdDate', 'notes', 'generalNotes'],
-};
+import {
+    itemSchema,
+    itemKindSchema,
+    recordSchema,
+    emptyRecord,
+} from '../types';
+import type { Item, Kind, Record } from '../types';
 
 const prayerJournalModule = {
     name: 'prayerJournal',
@@ -208,6 +65,42 @@ const prayerJournalModule = {
 
         return {
             exports: {
+                getCollection: function<T>(col: string) {
+                    const kind = {
+                        items: 'item',
+                        kinds: 'item-kind',
+                        records: 'record',
+                    }[col];
+                    const getPath = {
+                        items: itemPath,
+                        kinds: kindPath,
+                        records: recordPath,
+                    }[col];
+                    return {
+                        save: (id: string, value: T) =>
+                            priv.storeObject(kind, getPath(id), value),
+                        load: (id: string) => priv.getObject(getPath(id)),
+                        loadAll: () => priv.getAll(getPath('')),
+                        delete: (id: string) => priv.remove(getPath(id)),
+                        onChange: (fn: (value: ?T, id: string) => void) => {
+                            const listener = evt => {
+                                const [one, id] = evt.relativePath.split('/');
+                                if (one !== col) {
+                                    return;
+                                }
+                                fn(evt.newValue, id);
+                            };
+                            priv.on('change', listener);
+                            return () => {
+                                priv.off('change', listener);
+                            };
+                            // return onPath(getPath(''), fn);
+                        },
+                        onItemChange: (id: string, fn: (value: ?T) => void) => {
+                            return onObject(getPath(id), fn);
+                        },
+                    };
+                },
                 archiveItem: async (item: Item) => {
                     const updated: Item = {
                         ...item,

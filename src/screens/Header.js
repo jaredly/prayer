@@ -5,10 +5,16 @@ import { jsx } from '@emotion/core';
 import LogOut from 'react-ionicons/lib/MdLogOut';
 import Menu from 'react-ionicons/lib/MdMenu';
 import Colors from './Colors';
-import type { RemoteStorageT } from '../';
+import type { PrayerJournalApi } from '../db/PrayerJournalApi';
 
-const Header = ({ rs, onMenu }: { rs: RemoteStorageT, onMenu: () => void }) => {
-    if (!rs.remote.userAddress) {
+const Header = ({
+    api,
+    onMenu,
+}: {
+    api: PrayerJournalApi,
+    onMenu: () => void,
+}) => {
+    if (!api.isConnected()) {
         return null;
     }
     return (

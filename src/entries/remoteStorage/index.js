@@ -7,18 +7,63 @@ import ReactDOM from 'react-dom';
 // magically adds the `Gun.user` stuff
 // import "gun/sea"
 
-import LoadingStateWrapper, { useLoadingState } from './LoadingStateWrapper';
-import { loaded } from './loadingState';
-import { useUser, type UserState, initialUserStatus } from './user';
-import LoginScreen from './screens/Login';
-import Shell from './screens/Shell';
+import LoadingStateWrapper, {
+    useLoadingState,
+} from '../../LoadingStateWrapper';
+import { loaded } from '../../loadingState';
+import LoginScreen from './Login';
+import Shell from '../../screens/Shell';
+import { createApi, type PrayerJournalApi } from '../../db/prayerJournalApi';
+import { type Collection } from '../../db/apiInterface';
 import prayerJournalModule, {
     type PrayerJournalModuleType,
-} from './prayerJournalModule';
+} from '../../db/prayerJournalModule';
+
+import { wrapLoadingState } from '../../LoadingStateWrapper';
+import { type LoadingState } from '../../loadingState';
+
+const serializeUser = user => {
+    return JSON.stringify(user._.sea);
+};
+const deserializeUser = (user, string) => {
+    const data = JSON.parse(string);
+    user.auth(data);
+};
+
+export type UserState =
+    | { type: 'logged-out' }
+    | { type: 'logged-in', user: any };
+
+export const initialUserStatus = (
+    rs: RemoteStorageT,
+): LoadingState<UserState> => {
+    if (rs.remote && rs.remote.connected) {
+        return loaded({ type: 'logged-in', user: rs.remote });
+    }
+    return loaded({ type: 'logged-out' });
+};
+
+export const useUser = (
+    gun: any,
+    loginStatus: LoadingState<UserState>,
+    setLoginStatus: any,
+): ((string, string) => void) => {
+    const updateLoginStatus = wrapLoadingState(loginStatus, setLoginStatus);
+
+    const onLogin = React.useCallback((username: string, password: string) => {
+        // const user = gun.user();
+        // updateLoginStatus(login(gun, user, username, password).then(res => {
+        //     window.localStorage.user = serializeUser(user)
+        //     return {type: 'logged-in', user: user}
+        // }))
+    }, []);
+    return onLogin;
+};
 
 import RemoteStorage from 'remotestoragejs';
 
 export type RemoteStorageT = {
+    setApiKeys: ({ googledrive: string, dropbox: string }) => void,
     prayerJournal: PrayerJournalModuleType,
     access: {
         claim: (string, 'r' | 'rw') => void,
@@ -35,6 +80,7 @@ export type RemoteStorageT = {
 };
 
 type AppState = {
+    api: PrayerJournalApi,
     rs: RemoteStorageT,
     userState: UserState,
 };
@@ -42,7 +88,7 @@ type AppState = {
 const config = require('./config.json');
 
 const getInitialState = () => {
-    const rs = new RemoteStorage({
+    const rs: RemoteStorageT = new RemoteStorage({
         modules: [prayerJournalModule],
         changeEvents: {
             local: true,
@@ -64,6 +110,15 @@ const getInitialState = () => {
 
     return {
         rs,
+        api: createApi({
+            getCollection: function<T>(id): Collection<T> {
+                // $FlowFixMe
+                return rs.prayerJournal.getCollection<T>(id);
+            },
+            isConnected: () => rs.remote.connected,
+            getUsername: () => rs.remote.userAddress,
+            logout: () => rs.disconnect(),
+        }),
         userState: initialUserStatus(rs),
     };
 };
@@ -114,7 +169,7 @@ const App = () => {
         state.userState.data.type === 'logged-in'
     ) {
         window.user = state.userState.data.user;
-        return <Shell rs={state.rs} />;
+        return <Shell api={state.api} />;
     } else {
         console.log(state);
         return (
@@ -136,6 +191,6 @@ if ('serviceWorker' in navigator) {
         if (!navigator.serviceWorker) {
             return;
         }
-        navigator.serviceWorker.register('../sw.js');
+        navigator.serviceWorker.register('../../sw.js');
     });
 }

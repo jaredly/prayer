@@ -2,12 +2,12 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import React from 'react';
-import { defaultTypes, type Item, type Kind } from '../prayerJournalModule';
+import { defaultTypes, type Item, type Kind } from '../types';
 import Header from './Header';
 import Adder from './Adder';
 import ViewItem, { maybeBlank } from './ViewItem';
 import Colors from './Colors';
-import type { RemoteStorageT } from '../';
+import type { PrayerJournalApi } from '../db/PrayerJournalApi';
 
 export const cmp = (a: any, b: any) => (a < b ? -1 : a > b ? 1 : 0);
 
@@ -16,13 +16,13 @@ const Listing = ({
     onAdd,
     setShowing,
     sorted,
-    rs,
+    api,
 }: {
     types: { [key: string]: Kind },
     onAdd: string => void,
     setShowing: string => void,
     sorted: { [key: string]: Array<Item> },
-    rs: RemoteStorageT,
+    api: PrayerJournalApi,
 }) => {
     if (Object.keys(types).length === 0) {
         return (
@@ -34,10 +34,8 @@ const Listing = ({
                 </div>
                 <button
                     onClick={() => {
-                        // rs.prayerJournal.putKind
-                        // const types = user.get('types');
                         defaultTypes.forEach(t => {
-                            rs.prayerJournal.putKind(t);
+                            api.putKind(t);
                         });
                     }}
                 >

@@ -2,7 +2,7 @@
 /** @jsx jsx */
 import { jsx } from '@emotion/core';
 import React from 'react';
-import { defaultTypes, type Item, type Kind } from '../prayerJournalModule';
+import { defaultTypes, type Item, type Kind } from '../types';
 import Header from './Header';
 import Adder from './Adder';
 import Textarea from './Textarea';
@@ -10,7 +10,7 @@ import Close from 'react-ionicons/lib/MdClose';
 import Checkmark from 'react-ionicons/lib/MdCheckmark';
 import Create from 'react-ionicons/lib/MdCreate';
 import { useRecords } from './Records';
-import type { RemoteStorageT } from '../';
+import type { PrayerJournalApi } from '../db/PrayerJournalApi';
 import Colors from './Colors';
 import ArrowBack from 'react-ionicons/lib/MdArrowBack';
 
@@ -98,16 +98,16 @@ const ViewItem = ({
     onClose,
     onDelete,
     onChange,
-    rs,
+    api,
 }: {
     item: Item,
     type: ?Kind,
     onClose: () => void,
     onDelete: () => void,
     onChange: (item: Item) => void,
-    rs: RemoteStorageT,
+    api: PrayerJournalApi,
 }) => {
-    const records = useRecords(rs);
+    const records = useRecords(api);
     return (
         <div
             css={{
@@ -168,16 +168,14 @@ const ViewItem = ({
                     {item.active ? (
                         <button
                             onClick={() => {
-                                rs.prayerJournal.archiveItem(item);
+                                api.archiveItem(item);
                                 onClose();
                             }}
                         >
                             Archive
                         </button>
                     ) : (
-                        <button
-                            onClick={() => rs.prayerJournal.unarchiveItem(item)}
-                        >
+                        <button onClick={() => api.unarchiveItem(item)}>
                             Unarchive
                         </button>
                     )}
