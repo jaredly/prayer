@@ -1,17 +1,19 @@
 // @flow
 const RxDB = require('rxdb');
 const { recordSchema, itemSchema, itemKindSchema } = require('../../src/types');
-// RxDB.plugin(require('pouchdb-adapter-leveldb'));
-RxDB.plugin(require('pouchdb-adapter-memory'));
+RxDB.plugin(require('pouchdb-adapter-leveldb'));
+// RxDB.plugin(require('pouchdb-adapter-memory'));
 const leveldown = require('leveldown');
+
+process.chdir(__dirname + '/.data');
 
 RxDB.plugin(require('rxdb/plugins/server'));
 
 RxDB.create({
-    // name: __dirname + '/.data/mydatabase',
+    name: __dirname + '/.data/mydatabase',
     name: 'heroesdb',
-    // adapter: 'leveldb',
-    adapter: 'memory',
+    adapter: 'leveldb',
+    // adapter: 'memory',
 }).then(async db => {
     await db.collection({ name: 'items', schema: itemSchema });
     await db.collection({ name: 'kinds', schema: itemKindSchema });

@@ -57,12 +57,12 @@ export const login = async (
 const App = () => {
     // const [api, setApi] = React.useState(null);
     const api = React.useMemo(() => {
-        // RxDB.plugin(require('pouchdb-adapter-idb'));
-        RxDB.plugin(require('pouchdb-adapter-memory'));
+        RxDB.plugin(require('pouchdb-adapter-idb'));
+        // RxDB.plugin(require('pouchdb-adapter-memory'));
         RxDB.plugin(require('pouchdb-adapter-http'));
         const db = RxDB.create({
             name: 'heroesdb',
-            adapter: 'memory',
+            adapter: 'idb',
             // password: 'myLongAndStupidPassword', // optional
             // multiInstance: true, // default: true
         });

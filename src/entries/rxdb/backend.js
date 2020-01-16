@@ -24,7 +24,7 @@ export default (db: Promise<any>) => {
 
                 console.log(id);
                 const replicationState = collection.sync({
-                    remote: 'http://localhost:9102',
+                    remote: 'http://localhost:9102/' + id,
                 });
                 return collection;
             });
