@@ -16,9 +16,18 @@ const schemas = {
 export default (db: Promise<any>) => {
     return {
         getCollection: (id: string) => {
-            const cprom = db.then(db =>
-                db.collection({ name: id, schema: schemas[id] }),
-            );
+            const cprom = db.then(async db => {
+                const collection = await db.collection({
+                    name: id,
+                    schema: schemas[id],
+                });
+
+                console.log(id);
+                const replicationState = collection.sync({
+                    remote: 'http://localhost:9102',
+                });
+                return collection;
+            });
             return {
                 save: async (id: string, value: *) => {
                     const col = await cprom;

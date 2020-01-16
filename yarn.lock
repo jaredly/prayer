@@ -1042,6 +1042,13 @@ abab@^2.0.0:
   resolved "https://registry.yarnpkg.com/abab/-/abab-2.0.3.tgz#623e2075e02eb2d3f2475e49f99c91846467907a"
   integrity sha512-tsFzPpcttalNjFBCFMqsKYQcWxxen1pgJR56by//QwvJc4/OUS3kPOOttx2tSIfjsylB0pYu7f5D3K1RCxUnUg==
 
+abstract-leveldown@2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/abstract-leveldown/-/abstract-leveldown-2.4.1.tgz#b3bfedb884eb693a12775f0c55e9f0a420ccee64"
+  integrity sha1-s7/tuITraToSd18MVenwpCDM7mQ=
+  dependencies:
+    xtend "~4.0.0"
+
 abstract-leveldown@^5.0.0, abstract-leveldown@~5.0.0:
   version "5.0.0"
   resolved "https://registry.yarnpkg.com/abstract-leveldown/-/abstract-leveldown-5.0.0.tgz#f7128e1f86ccabf7d2893077ce5d06d798e386c6"
@@ -3830,6 +3837,11 @@ function-bind@^1.1.1:
   resolved "https://registry.yarnpkg.com/function-bind/-/function-bind-1.1.1.tgz#a56899d3ea3c9bab874bb9773b7c5ede92f4895d"
   integrity sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A==
 
+functional-red-black-tree@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
+  integrity sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=
+
 gar@^1.0.4:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/gar/-/gar-1.0.4.tgz#f777bc7db425c0572fdeb52676172ca1ae9888b8"
@@ -4217,7 +4229,7 @@ immediate@3.0.6, immediate@~3.0.5:
   resolved "https://registry.yarnpkg.com/immediate/-/immediate-3.0.6.tgz#9db1dbd0faf8de6fbe0f5dd5e56bb606280de69b"
   integrity sha1-nbHb0Pr43m++D13V5Wu2BigN5ps=
 
-immediate@~3.2.3:
+immediate@^3.2.3, immediate@~3.2.3:
   version "3.2.3"
   resolved "https://registry.yarnpkg.com/immediate/-/immediate-3.2.3.tgz#d140fa8f614659bd6541233097ddaac25cdd991c"
   integrity sha1-0UD6j2FGWb1lQSMwl92qwlzdmRw=
@@ -5313,7 +5325,7 @@ ltgt@2.2.1, ltgt@^2.1.2:
   resolved "https://registry.yarnpkg.com/ltgt/-/ltgt-2.2.1.tgz#f35ca91c493f7b73da0e07495304f17b31f87ee5"
   integrity sha1-81ypHEk/e3PaDgdJUwTxezH4fuU=
 
-ltgt@~2.1.1:
+ltgt@~2.1.1, ltgt@~2.1.3:
   version "2.1.3"
   resolved "https://registry.yarnpkg.com/ltgt/-/ltgt-2.1.3.tgz#10851a06d9964b971178441c23c9e52698eece34"
   integrity sha1-EIUaBtmWS5cReEQcI8nlJpjuzjQ=
@@ -5355,6 +5367,17 @@ media-typer@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"
   integrity sha1-hxDXrwqmJvj/+hzgAWhUUmMlV0g=
+
+memdown@1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/memdown/-/memdown-1.2.4.tgz#cd9a34aaf074d53445a271108eb4b8dd4ec0f27f"
+  integrity sha1-zZo0qvB01TRFonEQjrS43U7A8n8=
+  dependencies:
+    abstract-leveldown "2.4.1"
+    functional-red-black-tree "^1.0.1"
+    immediate "^3.2.3"
+    inherits "~2.0.1"
+    ltgt "~2.1.3"
 
 memoize-one@^5.0.0:
   version "5.1.1"
@@ -6684,6 +6707,17 @@ pouchdb-abstract-mapreduce@7.1.1:
     pouchdb-md5 "7.1.1"
     pouchdb-utils "7.1.1"
 
+pouchdb-adapter-http@^7.1.1:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/pouchdb-adapter-http/-/pouchdb-adapter-http-7.1.1.tgz#83c0adebdbec60332b27e5e58d4935055efbbc36"
+  integrity sha512-SWuf9MIbJY6lXPJ03ejoDvV+9EMQqHLf3gKKnuU5w7wLXswZHlDd+6H8lJSorv3UYuF4T/fT3YP6AyOkAmHtYA==
+  dependencies:
+    argsarray "0.0.1"
+    pouchdb-binary-utils "7.1.1"
+    pouchdb-errors "7.1.1"
+    pouchdb-fetch "7.1.1"
+    pouchdb-utils "7.1.1"
+
 pouchdb-adapter-idb@^7.1.1:
   version "7.1.1"
   resolved "https://registry.yarnpkg.com/pouchdb-adapter-idb/-/pouchdb-adapter-idb-7.1.1.tgz#1c62edc4a0f5713422daa488ddcdcc5bfe68d130"
@@ -6734,6 +6768,15 @@ pouchdb-adapter-leveldb@^7.1.1:
     pouchdb-merge "7.1.1"
     pouchdb-utils "7.1.1"
     through2 "3.0.1"
+
+pouchdb-adapter-memory@^7.1.1:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/pouchdb-adapter-memory/-/pouchdb-adapter-memory-7.1.1.tgz#10c71aa249afadf3b4c39915865254f7f934abed"
+  integrity sha512-XkAhtemGxk2JmGxCpXyv1he3qchkZjIdpKz1kmZEVDx0FgbkqAbzxTWrmTSIAdwSYMglTV/DXjSMsyWWbUH4AA==
+  dependencies:
+    memdown "1.2.4"
+    pouchdb-adapter-leveldb-core "7.1.1"
+    pouchdb-utils "7.1.1"
 
 pouchdb-adapter-utils@7.1.1:
   version "7.1.1"

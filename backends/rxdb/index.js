@@ -1,20 +1,29 @@
 // @flow
 const RxDB = require('rxdb');
-RxDB.plugin(require('pouchdb-adapter-leveldb')); // leveldown adapters need the leveldb plugin to work
+const { recordSchema, itemSchema, itemKindSchema } = require('../../src/types');
+// RxDB.plugin(require('pouchdb-adapter-leveldb'));
+RxDB.plugin(require('pouchdb-adapter-memory'));
 const leveldown = require('leveldown');
 
 RxDB.plugin(require('rxdb/plugins/server'));
 
 RxDB.create({
-    name: __dirname + '/.data/mydatabase',
-    adapter: leveldown, // the full leveldown-module
-}).then(db => {
+    // name: __dirname + '/.data/mydatabase',
+    name: 'heroesdb',
+    // adapter: 'leveldb',
+    adapter: 'memory',
+}).then(async db => {
+    await db.collection({ name: 'items', schema: itemSchema });
+    await db.collection({ name: 'kinds', schema: itemKindSchema });
+    await db.collection({ name: 'records', schema: recordSchema });
+
     const { app, server } = db.server({
-        path: '/db', // (optional)
-        port: 9102, // (optional)
-        cors: true, // (optional), enable CORS-headers
-        startServer: true, // (optional), start express server
+        path: '/',
+        port: 9102,
+        cors: true,
+        startServer: true,
     });
+    console.log('serving');
 });
 
 // or use a specific folder to store the data

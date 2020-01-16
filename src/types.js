@@ -1,5 +1,6 @@
 // @flow
 
+/*::
 export type Kind = {
     id: string,
     title: string,
@@ -19,7 +20,16 @@ export type Item = {
     thoughts: ?Array<{ text: string, date: number }>,
 };
 
-export const itemSchema = {
+export type Record = {
+    id: string,
+    createdDate: number,
+    finishedDate?: number,
+    notes: { [key: string]: string },
+    generalNotes: string,
+};
+*/
+
+const itemSchema = {
     version: 0,
     type: 'object',
     properties: {
@@ -63,15 +73,7 @@ export const itemSchema = {
     ],
 };
 
-export type Record = {
-    id: string,
-    createdDate: number,
-    finishedDate?: number,
-    notes: { [key: string]: string },
-    generalNotes: string,
-};
-
-export const itemKindSchema = {
+const itemKindSchema = {
     version: 0,
     type: 'object',
     properties: {
@@ -84,7 +86,7 @@ export const itemKindSchema = {
     required: ['id', 'title', 'icon'],
 };
 
-export const defaultTypes: Array<Kind> = [
+const defaultTypes /*: Array<Kind>*/ = [
     {
         id: 'people',
         title: 'People in need',
@@ -129,14 +131,14 @@ export const defaultTypes: Array<Kind> = [
     },
 ];
 
-export const emptyRecord = (): Record => ({
+const emptyRecord = () /*: Record*/ => ({
     id: 'tmp',
     createdDate: Date.now(),
     notes: {},
     generalNotes: '',
 });
 
-export const recordSchema = {
+const recordSchema = {
     version: 0,
     type: 'object',
     properties: {
@@ -147,4 +149,12 @@ export const recordSchema = {
         generalNotes: { type: 'string' },
     },
     required: ['id', 'createdDate', 'notes', 'generalNotes'],
+};
+
+module.exports = {
+    recordSchema,
+    emptyRecord,
+    itemKindSchema,
+    itemSchema,
+    defaultTypes,
 };
