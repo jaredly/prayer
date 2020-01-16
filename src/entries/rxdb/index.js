@@ -3,9 +3,9 @@
 import 'regenerator-runtime/runtime';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Gun from 'gun';
-// magically adds the `Gun.user` stuff
-import 'gun/sea';
+import Yjs from 'yjs';
+import setupBackend from './backend';
+import RxDB from 'rxdb';
 
 import LoadingStateWrapper, {
     useLoadingState,
@@ -55,9 +55,20 @@ export const login = async (
 };
 
 const App = () => {
-    const api = React.useMemo(() =>
-        createBackend(new Gun(['https://gunjs-server.glitch.me/gunz'])),
-    );
+    // const [api, setApi] = React.useState(null);
+    const api = React.useMemo(() => {
+        RxDB.plugin(require('pouchdb-adapter-idb'));
+        const db = RxDB.create({
+            name: 'heroesdb',
+            adapter: 'idb',
+            password: 'myLongAndStupidPassword', // optional
+            multiInstance: true, // default: true
+        });
+        return createApi(setupBackend(db));
+    });
+    if (!api) {
+        return 'Lodaing';
+    }
     return <Shell api={api} />;
 };
 

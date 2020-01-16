@@ -20,9 +20,10 @@ export type Item = {
 };
 
 export const itemSchema = {
+    version: 0,
     type: 'object',
     properties: {
-        id: { type: 'string' },
+        id: { type: 'string', primary: true },
         kind: { type: 'string' },
         text: { type: 'string' },
         active: { type: 'boolean' },
@@ -71,9 +72,10 @@ export type Record = {
 };
 
 export const itemKindSchema = {
+    version: 0,
     type: 'object',
     properties: {
-        id: { type: 'string' },
+        id: { type: 'string', primary: true },
         title: { type: 'string' },
         description: { type: 'string' },
         icon: { type: 'string' },
@@ -135,9 +137,10 @@ export const emptyRecord = (): Record => ({
 });
 
 export const recordSchema = {
+    version: 0,
     type: 'object',
     properties: {
-        id: { type: 'string' },
+        id: { type: 'string', primary: true },
         createdDate: { type: 'number' },
         finishedDate: { type: 'number' },
         notes: { type: 'object', additionalProperties: { type: 'string' } },

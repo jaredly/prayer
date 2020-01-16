@@ -1,0 +1,100 @@
+// @flow
+import RxDB from 'rxdb';
+import {
+    itemSchema,
+    itemKindSchema,
+    recordSchema,
+    emptyRecord,
+} from '../../types';
+
+const schemas = {
+    items: itemSchema,
+    kinds: itemKindSchema,
+    records: recordSchema,
+};
+
+export default (db: Promise<any>) => {
+    return {
+        getCollection: (id: string) => {
+            const cprom = db.then(db =>
+                db.collection({ name: id, schema: schemas[id] }),
+            );
+            return {
+                save: async (id: string, value: *) => {
+                    const col = await cprom;
+                    // NOTE value must contain the ID
+                    col.atomicUpsert(value);
+                },
+                load: async (id: string) => {
+                    const col = await cprom;
+                    return col
+                        .findOne(id)
+                        .exec()
+                        .then(v => v.toJSON());
+                },
+                loadAll: async () => {
+                    const col = await cprom;
+                    return col.find().exec();
+                },
+                delete: async (id: string) => {
+                    const col = await cprom;
+                    return col.findOne(id).remove();
+                },
+                onChange: (fn: (value: ?*, id: string) => void) => {
+                    let unsub = () => {};
+                    cprom.then(col => {
+                        // const values = await col.find().exec();
+                        // const map = {};
+                        // values.forEach(v => (map[v.id] = v));
+                        // fn(map)
+                        const sub = col.$.subscribe(changeEvent => {
+                            console.log(changeEvent);
+                            if (
+                                changeEvent.data.op === 'INSERT' ||
+                                changeEvent.data.op === 'UPDATE'
+                            ) {
+                                fn(changeEvent.data.v, changeEvent.data.v.id);
+                                // map[changeEvent.data.value.id] =
+                                //     changeEvent.data.value;
+                            } else if (changeEvent.data.op === 'REMOVE') {
+                                fn(null, changeEvent.data.doc);
+                                // delete map[changeEvent.data.doc];
+                            }
+                            // fn(map);
+                        });
+                        unsub = () => sub.unsubscribe();
+                    });
+                    return () => {
+                        unsub();
+                    };
+                },
+                onItemChange: (id: string, fn: (value: ?*) => void) => {
+                    let unsub = () => {};
+                    cprom.then(col => {
+                        const sub = col.$.subscribe(changeEvent => {
+                            console.log(changeEvent);
+                            if (changeEvent.data.doc !== id) {
+                                return;
+                            }
+                            if (
+                                changeEvent.data.op === 'INSERT' ||
+                                changeEvent.data.op === 'UPDATE'
+                            ) {
+                                fn(changeEvent.data.v);
+                            } else if (changeEvent.data.op === 'REMOVE') {
+                                fn(null);
+                            }
+                        });
+                        unsub = () => sub.unsubscribe();
+                    });
+                    return () => {
+                        unsub();
+                    };
+                },
+            };
+        },
+        isConnected: () => true,
+        getUsername: () => 'hi',
+        logout: () => {},
+    };
+};

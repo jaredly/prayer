@@ -885,6 +885,33 @@
     "@parcel/utils" "^1.11.0"
     physical-cpu-count "^2.0.0"
 
+"@peculiar/asn1-schema@^1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@peculiar/asn1-schema/-/asn1-schema-1.0.3.tgz#e55ff9e98a1cf31832629aabacf85be3edf13a48"
+  integrity sha512-Tfgj9eNJ6cTKEtEuidKenLHMx/Q5M8KEE9hnohHqvdpqHJXWYr5RlT3GjAHPjGXy5+mr7sSfuXfzE6aAkEGN7A==
+  dependencies:
+    asn1js "^2.0.22"
+    tslib "^1.9.3"
+
+"@peculiar/json-schema@^1.1.6":
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/@peculiar/json-schema/-/json-schema-1.1.9.tgz#b746e046b787607a1b2804f64437fda2527b3e62"
+  integrity sha512-F2ST2y/IQPgY+1QMw1Q33sqJbGDCeO3lGqI69SL3Hgo0++7iHqprUB1QyxB/A7bN3tuM65MBxoM2JLbwh42lsQ==
+  dependencies:
+    tslib "^1.10.0"
+
+"@peculiar/webcrypto@^1.0.19":
+  version "1.0.22"
+  resolved "https://registry.yarnpkg.com/@peculiar/webcrypto/-/webcrypto-1.0.22.tgz#9dae652fce6bacd9df15bc91965797cee33adf67"
+  integrity sha512-NP6H6ZGXUvJnQJCWzUgnRcQv+9nMCNwLUDhTwOxRUwPFvtHauMOl0oPTKUjbhInCMaE55gJqB4yc0YKbde6Exw==
+  dependencies:
+    "@peculiar/asn1-schema" "^1.0.3"
+    "@peculiar/json-schema" "^1.1.6"
+    asn1js "^2.0.26"
+    pvtsutils "^1.0.9"
+    tslib "^1.10.0"
+    webcrypto-core "^1.0.17"
+
 "@types/body-parser@*":
   version "1.17.1"
   resolved "https://registry.yarnpkg.com/@types/body-parser/-/body-parser-1.17.1.tgz#18fcf61768fb5c30ccc508c21d6fd2e8b3bf7897"
@@ -1095,6 +1122,11 @@ acorn@^6.0.1, acorn@^6.0.4:
   version "6.4.0"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-6.4.0.tgz#b659d2ffbafa24baf5db1cdbb2c94a983ecd2784"
   integrity sha512-gac8OEcQ2Li1dxIEWGZzsp2BitJxwkwcOm0zHAJLcPJaVvm58FRnk6RkuLRpU1EujipU2ZFODv2P9DLMfnV8mw==
+
+addressparser@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/addressparser/-/addressparser-0.3.2.tgz#59873f35e8fcf6c7361c10239261d76e15348bb2"
+  integrity sha1-WYc/Nej89sc2HBAjkmHXbhU0i7I=
 
 after@0.8.1:
   version "0.8.1"
@@ -1309,6 +1341,13 @@ asn1@~0.2.3:
   dependencies:
     safer-buffer "~2.1.0"
 
+asn1js@^2.0.22, asn1js@^2.0.26:
+  version "2.0.26"
+  resolved "https://registry.yarnpkg.com/asn1js/-/asn1js-2.0.26.tgz#0a6d435000f556a96c6012969d9704d981b71251"
+  integrity sha512-yG89F0j9B4B0MKIcFyWWxnpZPLaNTjCj4tkE3fjbAoo0qmpGw0PYYqSbX/4ebnd9Icn8ZgK4K1fvDyEtW1JYtQ==
+  dependencies:
+    pvutils latest
+
 assert-plus@1.0.0, assert-plus@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/assert-plus/-/assert-plus-1.0.0.tgz#f12e0f3c5d77b0b1cdd9146942e4e96c1e4dd525"
@@ -1342,7 +1381,7 @@ async-each@^1.0.1:
   resolved "https://registry.yarnpkg.com/async-each/-/async-each-1.0.3.tgz#b727dbf87d7651602f06f4d4ac387f47d91b0cbf"
   integrity sha512-z/WhQ5FPySLdvREByI2vZiTWwCnF0moMJ1hK9YQwDTHKh6I7/uSckMetoRGb5UBZPC1z0jlw+n/XCgjeH7y1AQ==
 
-async-limiter@~1.0.0:
+async-limiter@^1.0.0, async-limiter@~1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/async-limiter/-/async-limiter-1.0.1.tgz#dd379e94f0db8310b08291f9d64c3209766617fd"
   integrity sha512-csOlWGAcRFJaI6m+F2WKdnMKr4HhdhFVBk0H/QbJFMCr+uO2kwohwXQPxw/9OCxp05r5ghVBFSyioixx3gfkNQ==
@@ -3080,6 +3119,28 @@ elliptic@^6.0.0:
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.0"
 
+emailjs-base64@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/emailjs-base64/-/emailjs-base64-1.1.4.tgz#392fa38cb6aa35dccd3af3637ffc14c1c7ce9612"
+  integrity sha512-4h0xp1jgVTnIQBHxSJWXWanNnmuc5o+k4aHEpcLXSToN8asjB5qbXAexs7+PEsUKcEyBteNYsSvXUndYT2CGGA==
+
+emailjs-mime-codec@^2.0.7:
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/emailjs-mime-codec/-/emailjs-mime-codec-2.0.9.tgz#d184451b6f2e55c5868b0f0a82d18fe2b82f0c97"
+  integrity sha512-7qJo4pFGcKlWh/kCeNjmcgj34YoJWY0ekZXEHYtluWg4MVBnXqGM4CRMtZQkfYwitOhUgaKN5EQktJddi/YIDQ==
+  dependencies:
+    emailjs-base64 "^1.1.4"
+    ramda "^0.26.1"
+    text-encoding "^0.7.0"
+
+emailjs@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/emailjs/-/emailjs-2.2.0.tgz#ba5b23e4a4b0a4510f652e873b154e9407b6ca03"
+  integrity sha1-ulsj5KSwpFEPZS6HOxVOlAe2ygM=
+  dependencies:
+    addressparser "^0.3.2"
+    emailjs-mime-codec "^2.0.7"
+
 emoji-regex@^7.0.1:
   version "7.0.3"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-7.0.3.tgz#933a04052860c85e83c122479c4748a8e4c72156"
@@ -3906,6 +3967,17 @@ graphql-client@2.0.1:
   integrity sha512-XXdjUD3mwsBDcUB7g+iXQeRt+3gmIbvA/Yx1nE5aq2RQmaJwiH4hEoYw27AW8cDR90pCrPlHJAb1jJq3zUMbZA==
   dependencies:
     isomorphic-fetch "^2.2.1"
+
+gun@^0.2019.1228:
+  version "0.2019.1228"
+  resolved "https://registry.yarnpkg.com/gun/-/gun-0.2019.1228.tgz#7ba7b5e61a3a3a523a816a204ffe08342e98eb65"
+  integrity sha512-rPwayPk5iYXWHZg3ftYYESzHec7eTguIFBMjR2ZtfLp6DX6WLDMUOSwzaPBFhEzLZ/Qvqg1G3hviO7tTMbnjHg==
+  dependencies:
+    ws "~>7.1.0"
+  optionalDependencies:
+    "@peculiar/webcrypto" "^1.0.19"
+    emailjs "^2.2.0"
+    text-encoding "^0.7.0"
 
 har-schema@^2.0.0:
   version "2.0.0"
@@ -4998,7 +5070,7 @@ leveldown@^4.0.0:
     nan "~2.12.1"
     prebuild-install "~5.2.4"
 
-leveldown@^5.0.0:
+leveldown@^5.0.0, leveldown@^5.4.1:
   version "5.4.1"
   resolved "https://registry.yarnpkg.com/leveldown/-/leveldown-5.4.1.tgz#83a8fdd9bb52b1ed69be2ef59822b6cdfcdb51ec"
   integrity sha512-3lMPc7eU3yj5g+qF1qlALInzIYnkySIosR1AsUKFjL9D8fYbTLuENBAeDRZXIG4qeWOAyqRItOoLu2v2avWiMA==
@@ -6612,6 +6684,69 @@ pouchdb-abstract-mapreduce@7.1.1:
     pouchdb-md5 "7.1.1"
     pouchdb-utils "7.1.1"
 
+pouchdb-adapter-idb@^7.1.1:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/pouchdb-adapter-idb/-/pouchdb-adapter-idb-7.1.1.tgz#1c62edc4a0f5713422daa488ddcdcc5bfe68d130"
+  integrity sha512-GtJhxg1i8waNX11fpibUOcgK0BoDm9ad+R4/mIP05OU7H6P77EVqlWyuJ+i3H0A5Vpwhndcmkpn45LbStTfepQ==
+  dependencies:
+    pouchdb-adapter-utils "7.1.1"
+    pouchdb-binary-utils "7.1.1"
+    pouchdb-collections "7.1.1"
+    pouchdb-errors "7.1.1"
+    pouchdb-json "7.1.1"
+    pouchdb-merge "7.1.1"
+    pouchdb-utils "7.1.1"
+
+pouchdb-adapter-indexeddb@^0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/pouchdb-adapter-indexeddb/-/pouchdb-adapter-indexeddb-0.0.0.tgz#8357baa134fd2c44c5e6ade6eb587395547e38f3"
+  integrity sha1-g1e6oTT9LETF5q3m61hzlVR+OPM=
+
+pouchdb-adapter-leveldb-core@7.1.1:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/pouchdb-adapter-leveldb-core/-/pouchdb-adapter-leveldb-core-7.1.1.tgz#f53b46841c92fbddcdefca4faba5e71877828a3a"
+  integrity sha512-+R0cHiqS1fF8QjjqZ02RMj70nbUetl2MvWq3rr1ml1IdGwmR3XfEgvs3zyojmn6WrwpW7Dka89s8FPfP5YG3SA==
+  dependencies:
+    argsarray "0.0.1"
+    buffer-from "1.1.0"
+    double-ended-queue "2.1.0-0"
+    levelup "4.0.2"
+    pouchdb-adapter-utils "7.1.1"
+    pouchdb-binary-utils "7.1.1"
+    pouchdb-collections "7.1.1"
+    pouchdb-errors "7.1.1"
+    pouchdb-json "7.1.1"
+    pouchdb-md5 "7.1.1"
+    pouchdb-merge "7.1.1"
+    pouchdb-utils "7.1.1"
+    sublevel-pouchdb "7.1.1"
+    through2 "3.0.1"
+
+pouchdb-adapter-leveldb@^7.1.1:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/pouchdb-adapter-leveldb/-/pouchdb-adapter-leveldb-7.1.1.tgz#e835a6a466612fe94a0fd4a67d14eec7cd3f20fd"
+  integrity sha512-MXcImKpPh9/TDR3DizPlOHLn9lqrWETYvWvH3TdW33Ob2BIugaOVdVyXkyreg7kwypaafchfHVRqZEzFkFzQsg==
+  dependencies:
+    level "5.0.1"
+    level-write-stream "1.0.0"
+    leveldown "5.0.2"
+    pouchdb-adapter-leveldb-core "7.1.1"
+    pouchdb-merge "7.1.1"
+    pouchdb-utils "7.1.1"
+    through2 "3.0.1"
+
+pouchdb-adapter-utils@7.1.1:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/pouchdb-adapter-utils/-/pouchdb-adapter-utils-7.1.1.tgz#565e63e06ed69cbdc36bac358b0eef6ebbf9eb31"
+  integrity sha512-xaHu//GYYerkU+1goBpJfgf4ScxIj8Z8vZ51mYe6hMm3jZpEqzrZo53b+QyxsH42mSAELBD9AZQgwQGgkQEYDQ==
+  dependencies:
+    pouchdb-binary-utils "7.1.1"
+    pouchdb-collections "7.1.1"
+    pouchdb-errors "7.1.1"
+    pouchdb-md5 "7.1.1"
+    pouchdb-merge "7.1.1"
+    pouchdb-utils "7.1.1"
+
 pouchdb-all-dbs@1.0.2, pouchdb-all-dbs@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/pouchdb-all-dbs/-/pouchdb-all-dbs-1.0.2.tgz#8fa1aa4b01665e00e0da9c61bf6dbb99eca05d3c"
@@ -6786,6 +6921,13 @@ pouchdb-generate-replication-id@7.1.1:
   dependencies:
     pouchdb-collate "7.1.1"
     pouchdb-md5 "7.1.1"
+
+pouchdb-json@7.1.1:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/pouchdb-json/-/pouchdb-json-7.1.1.tgz#e248b7ee7cc8c30b121184bb64b477a9c67d2378"
+  integrity sha512-AzeMQbM3PQAtmbJ1u4DJTJV7EDcD/6KKwlRmPMZKkN9/dgXxx6WkX7U3xglSw88HK0RJ5I/9P4HO3KO2cYcWvg==
+  dependencies:
+    vuvuzela "1.0.3"
 
 pouchdb-list@4.2.0:
   version "4.2.0"
@@ -7293,6 +7435,18 @@ purgecss@^1.4.0:
     postcss-selector-parser "^6.0.0"
     yargs "^14.0.0"
 
+pvtsutils@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/pvtsutils/-/pvtsutils-1.0.9.tgz#0eb6106f27878ccaa55e7dfbf6bd2c75af461dee"
+  integrity sha512-/kDsuCKPqJuIzn37w6+iN+TiSrN+zrwPEd7FjT61oNbRvceGdsS94fMEWZ4/h6QZU5EZhBMiV+79IYedroP/Yw==
+  dependencies:
+    tslib "^1.10.0"
+
+pvutils@latest:
+  version "1.0.17"
+  resolved "https://registry.yarnpkg.com/pvutils/-/pvutils-1.0.17.tgz#ade3c74dfe7178944fe44806626bd2e249d996bf"
+  integrity sha512-wLHYUQxWaXVQvKnwIDWFVKDJku9XDCvyhhxoq8dc5MFdIlRenyPI9eSfEtcvgHgD7FlvCyGAlWgOzRnZD99GZQ==
+
 q@^1.1.2:
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/q/-/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
@@ -7326,6 +7480,11 @@ quote-stream@^1.0.1, quote-stream@~1.0.2:
     buffer-equal "0.0.1"
     minimist "^1.1.3"
     through2 "^2.0.0"
+
+ramda@^0.26.1:
+  version "0.26.1"
+  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.26.1.tgz#8d41351eb8111c55353617fc3bbffad8e4d35d06"
+  integrity sha512-hLWjpy7EnsDBb0p+Z3B7rPi3GDeRG5ZtiI33kJhTt+ORCd38AbAIjB/9zRIUoeTbE/AVX5ZkU7m6bznsvrf8eQ==
 
 random-bytes@~1.0.0:
   version "1.0.0"
@@ -7844,6 +8003,13 @@ rxdb@^8.7.5:
     url "^0.11.0"
     util "0.12.1"
     z-schema "4.2.2"
+
+rxjs@^6.5.4:
+  version "6.5.4"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.5.4.tgz#e0777fe0d184cec7872df147f303572d414e211c"
+  integrity sha512-naMQXcgEo3csAEGvw/NydRA0fuS2nDZJiw1YUWFKU7aPPAPGZEsD4Iimit96qwCieH6y614MCLYwdkrWx7z/7Q==
+  dependencies:
+    tslib "^1.9.0"
 
 safe-buffer@5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.2"
@@ -8425,6 +8591,16 @@ stylis@^3.5.0:
   resolved "https://registry.yarnpkg.com/stylis/-/stylis-3.5.4.tgz#f665f25f5e299cf3d64654ab949a57c768b73fbe"
   integrity sha512-8/3pSmthWM7lsPBKv7NXkzn2Uc9W7NotcwGNpJaa3k7WMM1XDCA4MgT5k/8BIexd5ydZdboXtU90XH9Ec4Bv/Q==
 
+sublevel-pouchdb@7.1.1:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/sublevel-pouchdb/-/sublevel-pouchdb-7.1.1.tgz#46feb7efe0dc3697a7b1b35169699972d54c2328"
+  integrity sha512-7egqKyyiTknLzTGcvijpqmLL9qx2unPVze02e/4pTnpSI0G0c0EblLv7jj1Nt7h0/P/5MNCvIr1+dMzgjgvc5Q==
+  dependencies:
+    inherits "2.0.3"
+    level-codec "9.0.1"
+    ltgt "2.2.1"
+    readable-stream "1.0.33"
+
 supports-color@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/supports-color/-/supports-color-2.0.0.tgz#535d045ce6b6363fa40117084629995e9df324c7"
@@ -8533,6 +8709,11 @@ terser@^4.3.9:
     commander "^2.20.0"
     source-map "~0.6.1"
     source-map-support "~0.5.12"
+
+text-encoding@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/text-encoding/-/text-encoding-0.7.0.tgz#f895e836e45990624086601798ea98e8f36ee643"
+  integrity sha512-oJQ3f1hrOnbRLOcwKz0Liq2IcrvDeZRHXhd9RgLrsT+DjWY/nty1Hi7v3dtkaEYbPYe0mUoOfzRrMwfXXwgPUA==
 
 through2@3.0.1:
   version "3.0.1"
@@ -8700,6 +8881,11 @@ truncate-utf8-bytes@^1.0.0:
   integrity sha1-QFkjkJWS1W94pYGENLC3hInKXys=
   dependencies:
     utf8-byte-length "^1.0.1"
+
+tslib@^1.10.0, tslib@^1.9.0, tslib@^1.9.3:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.10.0.tgz#c3c19f95973fb0a62973fb09d90d961ee43e5c8a"
+  integrity sha512-qOebF53frne81cf0S9B41ByenJ3/IuH8yJKngAX35CmiZySA0khhkovshKK+jGCaMnVomla7gVlIcc3EvKPbTQ==
 
 tty-browserify@0.0.0:
   version "0.0.0"
@@ -9079,6 +9265,14 @@ wcwidth@^1.0.1:
   dependencies:
     defaults "^1.0.3"
 
+webcrypto-core@^1.0.17:
+  version "1.0.17"
+  resolved "https://registry.yarnpkg.com/webcrypto-core/-/webcrypto-core-1.0.17.tgz#a9354bc0b1ba6735e882f4137ede2c4366e6ad9b"
+  integrity sha512-7jxTLgtM+TahBPErx/Dd2XvxFDfWJrHxjVeTSvIa4LSgiYrmCPlC2INiAMAfb8MbtHiwJKKqF5sPS0AWNjBbXw==
+  dependencies:
+    pvtsutils "^1.0.9"
+    tslib "^1.10.0"
+
 webfinger.js@^2.7.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/webfinger.js/-/webfinger.js-2.7.0.tgz#403354a14a65aeeba64c1408c18a387487cea106"
@@ -9365,6 +9559,13 @@ ws@~0.4.31:
     nan "~1.0.0"
     options ">=0.0.5"
     tinycolor "0.x"
+
+ws@~>7.1.0:
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-7.1.2.tgz#c672d1629de8bb27a9699eb599be47aeeedd8f73"
+  integrity sha512-gftXq3XI81cJCgkUiAVixA0raD9IVmXqsylCrjRygw4+UOOGzPoxnQ6r/CnVL9i+mDncJo94tSkyrtuuQVBmrg==
+  dependencies:
+    async-limiter "^1.0.0"
 
 xhr2@^0.1.4:
   version "0.1.4"
