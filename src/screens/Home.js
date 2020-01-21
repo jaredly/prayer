@@ -67,6 +67,10 @@ const HomeScreen = ({
                                     .slice(2),
                                 kind,
                                 text: '',
+                                settings: {
+                                    bold: false,
+                                    starred: false,
+                                },
                                 active: true,
                                 createdDate: Date.now(),
                                 modifiedDate: Date.now(),

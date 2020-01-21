@@ -47,21 +47,23 @@ const serdes = {
 
 export default (gun: *): Backend => ({
     getCollection: function<T>(col: string): Collection<T> {
+        window.gun = gun;
         const collection = gun.get(col);
         const serialize = col === 'items';
         const serde = serdes[col];
         return {
             setAttribute: (id: string, full: *, key: string, value: T) => {
+                // console.log('setting attribute', id, key, value);
                 return new Promise(res =>
                     collection
                         .get(id)
                         .get(key)
-                        .set(value, ack => res()),
+                        .put(value, ack => res()),
                 );
             },
             save: (id: string, value: T) => {
                 const v = serde ? serde.ser(value) : value;
-                console.log('saving', v);
+                // console.log('saving', v);
                 return new Promise(res => collection.set(v, ack => res()));
             },
             load: (id: string) =>
@@ -99,7 +101,7 @@ export default (gun: *): Backend => ({
                                 if (keys.length === 0) {
                                     return;
                                 }
-                                console.log(k, v);
+                                // console.log(k, v);
                                 // debugger;
                                 map[k] = serde ? serde.de(v) : v;
                             });
@@ -119,6 +121,7 @@ export default (gun: *): Backend => ({
             },
             onChange: (fn: (value: ?T, id: string) => void) => {
                 collection.map().on((item, id) => {
+                    // console.log('onChange for collection', col, item, id);
                     fn(serde ? serde.de(item) : item, id);
                 });
                 return () => {};

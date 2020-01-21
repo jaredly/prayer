@@ -15,6 +15,7 @@ import type { Types, Sorted, Route } from './Shell';
 
 window.testingData = {
     kinds: {},
+    messages: [],
 };
 
 const buttons: Array<{
@@ -60,13 +61,38 @@ const buttons: Array<{
         },
     },
     {
+        title: 'Mutate one thing 100 times (parallel)',
+        action: async api => {
+            const types = await api.getKinds();
+            const k = Object.keys(types)[0];
+            console.log('modifying', types[k]);
+            const promises = [];
+            for (let i = 0; i < 100; i++) {
+                const title = 'Modified title ' + i;
+                window.testingData.messages.push({
+                    title,
+                    id: k,
+                    col: 'types',
+                });
+                promises.push(api.setKindTitle(types[k], title));
+            }
+            await Promise.all(promises);
+        },
+    },
+    {
         title: 'Mutate one thing 100 times',
         action: async api => {
             const types = await api.getKinds();
             const k = Object.keys(types)[0];
             console.log('modifying', types[k]);
             for (let i = 0; i < 100; i++) {
-                await api.setKindTitle(types[k], 'Modified title ' + i);
+                const title = 'Modified title ' + i;
+                window.testingData.messages.push({
+                    title,
+                    id: k,
+                    col: 'types',
+                });
+                await api.setKindTitle(types[k], title);
             }
         },
     },

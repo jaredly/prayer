@@ -120,13 +120,21 @@ const Shell = ({ api }: { api: PrayerJournalApi }) => {
 
     const routeRef = React.useRef(route);
     React.useMemo(() => {
+        console.log('updating route!', route, routeRef.current);
         routeRef.current = route;
     }, [route]);
 
     React.useEffect(() => {
         window.addEventListener('hashchange', () => {
             const newRoute = parsePath(window.location.hash.slice(1));
+            console.log(
+                'hashchange',
+                newRoute,
+                window.location.hash.slice(1),
+                routeRef.current,
+            );
             if (!routeEq(newRoute, routeRef.current)) {
+                console.log('setting route!');
                 setRoute(newRoute);
             }
         });
@@ -185,24 +193,28 @@ const Shell = ({ api }: { api: PrayerJournalApi }) => {
         );
     }
 
-    if (route.type === 'item' && items[route.id]) {
-        const item = items[route.id];
-        return (
-            <ViewItem
-                item={item}
-                api={api}
-                type={types[item.kind]}
-                onClose={() => setRoute(null)}
-                onDelete={() => {
-                    api.removeItem(item.id);
-                    // deleteItem(item);
-                    setRoute(null);
-                }}
-                onChange={item => {
-                    api.putItem(item);
-                }}
-            />
-        );
+    if (route.type === 'item') {
+        if (items[route.id]) {
+            const item = items[route.id];
+            return (
+                <ViewItem
+                    item={item}
+                    api={api}
+                    type={types[item.kind]}
+                    onClose={() => setRoute(null)}
+                    onDelete={() => {
+                        api.removeItem(item.id);
+                        // deleteItem(item);
+                        setRoute(null);
+                    }}
+                    onChange={item => {
+                        api.putItem(item);
+                    }}
+                />
+            );
+        } else {
+            console.log('No item', route.id, Object.keys(items));
+        }
     }
 
     if (route.type === 'archive') {

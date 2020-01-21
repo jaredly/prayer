@@ -16,6 +16,10 @@ export type Item = {
     active: boolean,
     createdDate: number,
     modifiedDate: ?number,
+    settings: {
+        starred: boolean,
+        bold: boolean,
+    },
     activityHistory: Array<{ active: boolean, date: number }>,
     thoughts: ?Array<{ text: string, date: number }>,
 };
@@ -39,6 +43,13 @@ const itemSchema = {
         active: { type: 'boolean' },
         createdDate: { type: 'number' },
         modifiedDate: { type: 'number' },
+        settings: {
+            type: 'object',
+            properties: {
+                starred: { type: 'boolean' },
+                bold: { type: 'boolean' },
+            },
+        },
         activityHistory: {
             type: 'array',
             items: {
@@ -66,6 +77,7 @@ const itemSchema = {
         'id',
         'kind',
         'text',
+        'settings',
         'createdDate',
         'modifiedDate',
         'active',
