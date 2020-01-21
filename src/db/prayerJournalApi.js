@@ -27,6 +27,7 @@ export const createApi = (backend: Backend) => {
             fn(all);
         });
         collection.loadAll().then(got => {
+            console.log('loaded', got);
             all = got;
             fn(all);
         });

@@ -74,4 +74,7 @@ const App = () => {
     return <Shell api={api} />;
 };
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const root = document.getElementById('root');
+if (root) {
+    ReactDOM.render(<App />, root);
+}

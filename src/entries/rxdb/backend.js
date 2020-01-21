@@ -6,6 +6,7 @@ import {
     recordSchema,
     emptyRecord,
 } from '../../types';
+import type { Backend, Collection } from '../../db/apiInterface';
 
 const schemas = {
     items: itemSchema,
@@ -13,9 +14,9 @@ const schemas = {
     records: recordSchema,
 };
 
-export default (db: Promise<any>) => {
+export default (db: Promise<any>): Backend => {
     return {
-        getCollection: (id: string) => {
+        getCollection: function<T>(id: string): Collection<T> {
             const cprom = db.then(async db => {
                 const collection = await db.collection({
                     name: id,

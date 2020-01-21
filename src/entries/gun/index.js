@@ -7,6 +7,8 @@ import Gun from 'gun';
 // magically adds the `Gun.user` stuff
 import 'gun/sea';
 
+import createBackend from './backend';
+
 import LoadingStateWrapper, {
     useLoadingState,
 } from '../../LoadingStateWrapper';
@@ -56,9 +58,14 @@ export const login = async (
 
 const App = () => {
     const api = React.useMemo(() =>
-        createBackend(new Gun(['https://gunjs-server.glitch.me/gunz'])),
+        createApi(
+            createBackend(new Gun(['https://gunjs-server.glitch.me/gunz'])),
+        ),
     );
     return <Shell api={api} />;
 };
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const root = document.getElementById('root');
+if (root) {
+    ReactDOM.render(<App />, root);
+}
