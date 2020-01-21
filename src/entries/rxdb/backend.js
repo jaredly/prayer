@@ -30,6 +30,19 @@ export default (db: Promise<any>): Backend => {
                 return collection;
             });
             return {
+                setAttribute: async (
+                    id: string,
+                    full: *,
+                    key: string,
+                    value: *,
+                ) => {
+                    const col = await cprom;
+                    // NOTE value must contain the ID
+                    col.atomicUpsert({
+                        id,
+                        [key]: value,
+                    });
+                },
                 save: async (id: string, value: *) => {
                     const col = await cprom;
                     // NOTE value must contain the ID

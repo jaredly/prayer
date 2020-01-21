@@ -58,9 +58,7 @@ export const login = async (
 
 const App = () => {
     const api = React.useMemo(() =>
-        createApi(
-            createBackend(new Gun(['https://gunjs-server.glitch.me/gunz'])),
-        ),
+        createApi(createBackend(new Gun(['http://localhost:9104/gunz']))),
     );
     return <Shell api={api} />;
 };

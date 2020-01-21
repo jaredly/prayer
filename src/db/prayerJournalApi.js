@@ -93,6 +93,9 @@ export const createApi = (backend: Backend) => {
             ]);
             return record;
         },
+        setKindTitle: async (kind: Kind, title: string) => {
+            return kinds.setAttribute(kind.id, kind, 'title', title);
+        },
         putKind: async (kind: Kind) => {
             await kinds.save(kind.id, kind);
             return kind;
@@ -107,6 +110,13 @@ export const createApi = (backend: Backend) => {
         },
         removeItem: async (id: string) => {
             await items.delete(id);
+        },
+        getKinds: (): Promise<{ [key: string]: Kind }> => {
+            return new Promise((res, rej) =>
+                kinds.loadAll().then(listing => {
+                    res(listing);
+                }),
+            );
         },
         getRecords: (): Promise<{ [key: string]: Record }> => {
             return new Promise((res, rej) =>

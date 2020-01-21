@@ -10,6 +10,7 @@ import Colors from './Colors';
 import Listing from './Listing';
 import PrayerRecorder from './PrayerRecorder';
 import LogOut from 'react-ionicons/lib/MdLogOut';
+import TestingHeader from './TestingHeader';
 import type { PrayerJournalApi } from '../db/PrayerJournalApi';
 import type { Types, Sorted, Route } from './Shell';
 
@@ -37,6 +38,7 @@ const HomeScreen = ({
                 flexDirection: 'column',
             }}
         >
+            <TestingHeader api={api} />
             <Header api={api} onMenu={() => setMenu(true)} />
             <div
                 css={{

@@ -2,6 +2,12 @@
 
 export type Collection<T> = {
     save: (id: string, value: T) => Promise<void>,
+    setAttribute: (
+        id: string,
+        full: T,
+        key: string,
+        value: any,
+    ) => Promise<void>,
     load: (id: string) => Promise<?T>,
     loadAll: () => Promise<{ [key: string]: T }>,
     delete: (id: string) => Promise<void>,

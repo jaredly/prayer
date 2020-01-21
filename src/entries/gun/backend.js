@@ -1,5 +1,7 @@
 // @flow
 
+import type { Backend, Collection } from '../../db/apiInterface';
+
 // const useGunCollection = collection => {
 //     const [state, setState] = React.useState({});
 //     React.useMemo(() => {
@@ -43,16 +45,24 @@ const serdes = {
     },
 };
 
-export default (gun: *) => ({
-    getCollection: function<T>(col: string) {
+export default (gun: *): Backend => ({
+    getCollection: function<T>(col: string): Collection<T> {
         const collection = gun.get(col);
         const serialize = col === 'items';
         const serde = serdes[col];
         return {
+            setAttribute: (id: string, full: *, key: string, value: T) => {
+                return new Promise(res =>
+                    collection
+                        .get(id)
+                        .get(key)
+                        .set(value, ack => res()),
+                );
+            },
             save: (id: string, value: T) => {
                 const v = serde ? serde.ser(value) : value;
                 console.log('saving', v);
-                collection.set(v);
+                return new Promise(res => collection.set(v, ack => res()));
             },
             load: (id: string) =>
                 new Promise<T>(res =>
@@ -103,7 +113,9 @@ export default (gun: *) => ({
             //     collection.once((a, b, c) => console.log(a, b, c)),
             // ),
             delete: (id: string) => {
-                collection.get(id).put(null);
+                return new Promise(res =>
+                    collection.get(id).put(null, () => res(undefined)),
+                );
             },
             onChange: (fn: (value: ?T, id: string) => void) => {
                 collection.map().on((item, id) => {

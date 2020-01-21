@@ -100,6 +100,7 @@ const Shell = ({ api }: { api: PrayerJournalApi }) => {
     const types = useRSKinds(api);
     const items = useRSItems(api);
     const sorted = {};
+    window.data = { types, items };
     Object.keys(items).forEach(id => {
         if (!items[id] || !items[id].active) {
             return;
